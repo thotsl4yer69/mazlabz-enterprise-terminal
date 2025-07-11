@@ -10,7 +10,6 @@ LABEL version="1.0.0"
 
 # Copy the terminal application
 COPY index.html /usr/share/nginx/html/
-COPY assets/ /usr/share/nginx/html/assets/
 
 # Create custom nginx configuration for SPA
 RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
