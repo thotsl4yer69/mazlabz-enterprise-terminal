@@ -1,0 +1,46 @@
+# MAZLABZ Enterprise Terminal - Google App Engine Configuration
+# Alternative deployment option for Google App Engine
+
+runtime: nodejs16
+
+# Service configuration
+service: default
+
+# Instance configuration
+instance_class: F2
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.6
+
+# Environment variables
+env_variables:
+  NODE_ENV: production
+  PORT: 8080
+
+# Static file handlers
+handlers:
+  # Main application
+  - url: /
+    static_files: index.html
+    upload: index.html
+    secure: always
+    redirect_http_response_code: 301
+
+  # Static assets
+  - url: /(.*)
+    static_files: \1
+    upload: (.*)
+    secure: always
+    redirect_http_response_code: 301
+
+# Skip files (equivalent to .gcloudignore)
+skip_files:
+  - ^(.*/)?#.*#$
+  - ^(.*/)?.*~$
+  - ^(.*/)?.*\.py[co]$
+  - ^(.*/)?.*/RCS/.*$
+  - ^(.*/)?\..*$
+  - ^(.*/)?node_modules/.*$
+  - ^(.*/)?\.github/.*$

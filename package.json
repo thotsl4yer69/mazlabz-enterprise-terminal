@@ -1,0 +1,41 @@
+{
+  "name": "mazlabz-enterprise-terminal",
+  "version": "1.0.0",
+  "description": "Enterprise AI Terminal Interface for Fortune 500 Digital Transformation",
+  "main": "index.html",
+  "scripts": {
+    "start": "nginx -g 'daemon off;'",
+    "build": "echo 'Static site - no build required'",
+    "deploy": "gcloud run deploy mazlabz-terminal --source .",
+    "test": "echo 'No tests specified'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/mazlabz-enterprise-terminal.git"
+  },
+  "keywords": [
+    "enterprise-ai",
+    "terminal-interface",
+    "fortune-500",
+    "digital-transformation",
+    "react",
+    "google-cloud",
+    "automation",
+    "artificial-intelligence"
+  ],
+  "author": {
+    "name": "Jack Mazzini",
+    "email": "jack.mazzini@mazlabz.com",
+    "url": "https://mazlabz.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/mazlabz-enterprise-terminal/issues"
+  },
+  "homepage": "https://github.com/yourusername/mazlabz-enterprise-terminal#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

@@ -1,0 +1,49 @@
+# MAZLABZ Enterprise Terminal - Google Cloud Build Configuration
+# Automated build and deployment pipeline for Google Cloud Run
+
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/mazlabz-terminal:$COMMIT_SHA', '.']
+    id: 'build-image'
+
+  # Push the Docker image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/mazlabz-terminal:$COMMIT_SHA']
+    id: 'push-image'
+    waitFor: ['build-image']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'mazlabz-terminal'
+      - '--image=gcr.io/$PROJECT_ID/mazlabz-terminal:$COMMIT_SHA'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--max-instances=10'
+      - '--port=8080'
+      - '--set-env-vars=NODE_ENV=production'
+    id: 'deploy-cloud-run'
+    waitFor: ['push-image']
+
+# Build configuration
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_STANDARD_2'
+
+# Build timeout
+timeout: '1200s'
+
+# Artifacts
+images:
+  - 'gcr.io/$PROJECT_ID/mazlabz-terminal:$COMMIT_SHA'
+
+# Substitutions
+substitutions:
+  _SERVICE_NAME: 'mazlabz-terminal'
+  _REGION: 'us-central1'

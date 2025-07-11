@@ -1,0 +1,54 @@
+# MAZLABZ Enterprise Terminal - Google Cloud Ignore File
+# Excludes files from deployment to optimize build time and security
+
+# Git files
+.git
+.gitignore
+.github/
+
+# Node modules (if any)
+node_modules/
+npm-debug.log
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Development files
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation (already in README)
+docs/
+*.md
+!README.md
+
+# Testing
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Build artifacts
+dist/
+build/
+.cache/
+
+# Temporary files
+tmp/
+temp/
