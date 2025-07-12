@@ -56,6 +56,14 @@ const PaymentProcessor = ({ onClose, projectData }) => {
     }).format(amount)
   }
 
+  const getBaseUrl = () => {
+    // Dynamic URL handling for local vs production
+    if (import.meta.env.DEV) {
+      return import.meta.env.VITE_LOCAL_URL || 'http://localhost:3000'
+    }
+    return import.meta.env.VITE_DOMAIN || 'https://mazlabz.us.kg'
+  }
+
   const handlePackageSelect = async (pkg) => {
     setSelectedPackage(pkg)
     setIsProcessing(true)
@@ -67,7 +75,24 @@ const PaymentProcessor = ({ onClose, projectData }) => {
         throw new Error('Stripe failed to load')
       }
 
-      // Create Stripe Checkout Session
+      // Validate that we have all required data
+      if (!pkg.priceId) {
+        throw new Error('Package price ID missing')
+      }
+
+      if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+        throw new Error('Stripe publishable key missing')
+      }
+
+      const baseUrl = getBaseUrl()
+
+      console.log('Initiating Stripe checkout with:', {
+        priceId: pkg.priceId,
+        baseUrl: baseUrl,
+        package: pkg.name
+      })
+
+      // Minimal Stripe Checkout Configuration
       const { error } = await stripe.redirectToCheckout({
         lineItems: [
           {
@@ -76,35 +101,19 @@ const PaymentProcessor = ({ onClose, projectData }) => {
           },
         ],
         mode: 'payment',
-        successUrl: `${window.location.origin}?payment=success&package=${pkg.id}`,
-        cancelUrl: `${window.location.origin}?payment=cancelled`,
-        customerEmail: 'mazlabz.ai@gmail.com', // Pre-fill with your email
-        billingAddressCollection: 'required',
-        phoneNumberCollection: {
-          enabled: true,
-        },
-        customText: {
-          submit: {
-            message: 'Your MAZLABZ enterprise implementation will begin immediately upon payment confirmation.',
-          },
-        },
-        metadata: {
-          package_id: pkg.id,
-          package_name: pkg.name,
-          implementation_timeline: pkg.timeline,
-          contact_email: 'mazlabz.ai@gmail.com'
-        }
+        successUrl: `${baseUrl}?payment=success&package=${pkg.id}`,
+        cancelUrl: `${baseUrl}?payment=cancelled`
       })
 
       if (error) {
         console.error('Stripe Checkout error:', error)
         setIsProcessing(false)
-        alert('Payment initialization failed. Please try again or contact mazlabz.ai@gmail.com')
+        alert(`Stripe Error: ${error.message}. Please contact mazlabz.ai@gmail.com`)
       }
     } catch (error) {
       console.error('Payment error:', error)
       setIsProcessing(false)
-      alert('Payment system error. Please contact mazlabz.ai@gmail.com for immediate assistance.')
+      alert(`Payment initialization failed: ${error.message}. Please contact mazlabz.ai@gmail.com for assistance.`)
     }
   }
 
@@ -164,6 +173,7 @@ const PaymentProcessor = ({ onClose, projectData }) => {
               <p style={{color: '#888', margin: '5px 0'}}>📧 mazlabz.ai@gmail.com</p>
               <p style={{color: '#888', margin: '5px 0'}}>📞 (+61) 493 719 523</p>
               <p style={{color: '#888', margin: '5px 0', fontSize: '12px'}}>Emergency support available 24/7</p>
+              <p style={{color: '#888', margin: '5px 0', fontSize: '12px'}}>🌐 Website: mazlabz.us.kg</p>
             </div>
 
             <button 
@@ -232,6 +242,25 @@ const PaymentProcessor = ({ onClose, projectData }) => {
             Implementation begins immediately upon confirmation. Full enterprise support included.
           </p>
         </div>
+
+        {/* Debug Info (only in development) */}
+        {import.meta.env.DEV && (
+          <div style={{
+            background: 'rgba(255, 255, 0, 0.1)',
+            padding: '10px',
+            margin: '10px 0',
+            borderRadius: '5px',
+            fontSize: '12px',
+            color: '#888'
+          }}>
+            <strong>Debug Info:</strong><br/>
+            Environment: {import.meta.env.DEV ? 'Development' : 'Production'}<br/>
+            Stripe Key: {import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ? 'Loaded' : 'Missing'}<br/>
+            Base URL: {getBaseUrl()}<br/>
+            Strategic Price: {import.meta.env.VITE_STRIPE_STRATEGIC_PRICE || 'Missing'}<br/>
+            Domain: {import.meta.env.VITE_DOMAIN || 'Not set'}
+          </div>
+        )}
       </div>
     </div>
   )
