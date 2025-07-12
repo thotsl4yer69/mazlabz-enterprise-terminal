@@ -1,41 +1,36 @@
 {
-  "name": "mazlabz-enterprise-terminal",
+  "name": "mazlabz-terminal",
+  "private": true,
   "version": "1.0.0",
-  "description": "Enterprise AI Terminal Interface for Fortune 500 Digital Transformation",
-  "main": "index.html",
+  "description": "MAZLABZ Enterprise Terminal Interface - Fortune 500 AI Solutions",
+  "type": "module",
   "scripts": {
-    "start": "nginx -g 'daemon off;'",
-    "build": "echo 'Static site - no build required'",
-    "deploy": "gcloud run deploy mazlabz-terminal --source .",
-    "test": "echo 'No tests specified'"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "deploy": "npm run build && vercel --prod"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yourusername/mazlabz-enterprise-terminal.git"
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^4.5.0"
+  },
+  "overrides": {
+    "@rollup/rollup-win32-x64-msvc": "^3.29.4"
   },
   "keywords": [
-    "enterprise-ai",
-    "terminal-interface",
-    "fortune-500",
-    "digital-transformation",
-    "react",
-    "google-cloud",
+    "enterprise",
+    "ai",
+    "terminal",
+    "fortune500",
     "automation",
-    "artificial-intelligence"
+    "mazlabz"
   ],
-  "author": {
-    "name": "Jack Mazzini",
-    "email": "jack.mazzini@mazlabz.com",
-    "url": "https://mazlabz.com"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/yourusername/mazlabz-enterprise-terminal/issues"
-  },
-  "homepage": "https://github.com/yourusername/mazlabz-enterprise-terminal#readme",
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "devDependencies": {},
-  "dependencies": {}
+  "author": "Jack Mazzini <jack.mazzini@mazlabz.com>",
+  "license": "Proprietary"
 }
