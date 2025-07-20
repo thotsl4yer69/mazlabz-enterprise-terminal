@@ -26,6 +26,7 @@ VITE_STRIPE_STRATEGIC_PRICE=price_1RjyW4H64eFgP6Gi...
 VITE_STRIPE_ENTERPRISE_PRICE=price_1RjyWPH64eFgP6Gi...
 VITE_STRIPE_TRANSFORMATION_PRICE=price_1RjyWjH64eFgP6Gi...
 VITE_STRIPE_FORTUNE500_PRICE=price_1RjyX6H64eFgP6Gi...
+VITE_LEAD_ENDPOINT=https://your-api.example.com/leads
 ```
 
 ## 📦 Enterprise Packages
@@ -56,4 +57,4 @@ Deploys automatically via GitHub Actions to Google Cloud Run.
 
 ---
 
-**⚠️ IMPORTANT**: This processes real payments. Test thoroughly before sharing with prospects.
+**⚠️ IMPORTANT**: This processes real payments. Test thoroughly before sharing with prospects

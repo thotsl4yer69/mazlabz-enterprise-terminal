@@ -19,19 +19,23 @@ const LeadCapture = ({ onClose, onSubmit }) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      // Send lead data to configured endpoint (no extra friction)
+      if (import.meta.env.VITE_LEAD_ENDPOINT) {
+        await fetch(import.meta.env.VITE_LEAD_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        })
+      }
       setSubmitted(true)
-      setIsSubmitting(false)
-      
-      // Send to parent component
       onSubmit(formData)
-      
-      // Close modal after success message
-      setTimeout(() => {
-        onClose()
-      }, 3000)
-    }, 1000)
+      setTimeout(() => onClose(), 3000)
+    } catch (err) {
+      console.error('Lead capture failed', err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (submitted) {
