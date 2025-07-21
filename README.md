@@ -4,7 +4,7 @@ Professional terminal interface with real Stripe payment processing for Fortune 
 
 ## 🚀 Live Demo
 - **Production URL**: https://mazlabz-terminal-894383524313.us-central1.run.app/
- - **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `MAZLAB`
+- **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `MAZLAB`, `anatomy`
 
 ## 💳 Payment Integration
 
@@ -43,6 +43,7 @@ VITE_ADMIN_PASSWORD=Adm1nSecure!2025
 Use the `upload` command or the **Select Files for Analysis** button to submit PDFs or images for metadata extraction. The system extracts EXIF data from images and PDF metadata for research analysis. View your uploaded files with the `files` command and display extracted data with `metadata`.
 Admin system metrics and file listings are available with the `MAZLAB` command.
 This command prompts for the password set in `VITE_ADMIN_PASSWORD` before the dashboard opens.
+Trigger the ASCII anatomy demo with the `anatomy` command.
 
 ## 🛠️ Development
 

@@ -1140,4 +1140,31 @@ body {
   color: #00d4aa;
 }
 
+.anatomy-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1300;
+  backdrop-filter: blur(10px);
+}
+
+.anatomy-content {
+  background: #000;
+  padding: 20px;
+  border: 2px solid #00d4aa;
+  border-radius: 8px;
+}
+
+.ascii-display {
+  font-family: monospace;
+  line-height: 1;
+  color: #00d4aa;
+}
+
 /* MAZLABZ Enterprise Solutions */
