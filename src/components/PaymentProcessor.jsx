@@ -11,37 +11,37 @@ const PaymentProcessor = ({ onClose, projectData }) => {
 
   const packages = [
     {
-      id: 'strategic',
-      name: 'Strategic Implementation',
+      id: 'basic',
+      name: 'Basic Implementation',
       price: 5000,
-      priceId: import.meta.env.VITE_STRIPE_STRATEGIC_PRICE,
+      priceId: import.meta.env.VITE_STRIPE_BASIC_PRICE,
       description: 'AI system implementation with 30-day deployment',
       features: ['AI Revenue Automation', 'Basic Analytics', '30-day implementation', 'Email support'],
       timeline: '30 days'
     },
     {
-      id: 'enterprise',
-      name: 'Enterprise Platform',
+      id: 'standard',
+      name: 'Standard Platform',
       price: 15000,
-      priceId: import.meta.env.VITE_STRIPE_ENTERPRISE_PRICE,
+      priceId: import.meta.env.VITE_STRIPE_STANDARD_PRICE,
       description: 'Complete enterprise AI transformation',
       features: ['Full AI Automation Suite', 'Advanced Analytics', 'Custom Integration', 'Priority support', '90-day implementation'],
       timeline: '90 days'
     },
     {
-      id: 'transformation',
-      name: 'Digital Transformation',
+      id: 'enterprise',
+      name: 'Enterprise Transformation',
       price: 30000,
-      priceId: import.meta.env.VITE_STRIPE_TRANSFORMATION_PRICE,
+      priceId: import.meta.env.VITE_STRIPE_ENTERPRISE_PRICE,
       description: 'Full enterprise system modernization',
       features: ['Complete Digital Overhaul', 'AI + Cloud Migration', 'Staff Training', 'Dedicated Success Manager', '6-month program'],
       timeline: '6 months'
     },
     {
-      id: 'fortune500',
-      name: 'Fortune 500 Program',
+      id: 'gov',
+      name: 'Government Program',
       price: 100000,
-      priceId: import.meta.env.VITE_STRIPE_FORTUNE500_PRICE,
+      priceId: import.meta.env.VITE_STRIPE_GOV_PRICE,
       description: 'Enterprise-wide AI transformation program',
       features: ['Multi-division Implementation', 'Custom AI Development', 'C-Suite Advisory', '24/7 Support', '12-month program', 'Guaranteed ROI'],
       timeline: '12 months'
@@ -257,7 +257,7 @@ const PaymentProcessor = ({ onClose, projectData }) => {
             Environment: {import.meta.env.DEV ? 'Development' : 'Production'}<br/>
             Stripe Key: {import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ? 'Loaded' : 'Missing'}<br/>
             Base URL: {getBaseUrl()}<br/>
-            Strategic Price: {import.meta.env.VITE_STRIPE_STRATEGIC_PRICE || 'Missing'}<br/>
+            Basic Price: {import.meta.env.VITE_STRIPE_BASIC_PRICE || 'Missing'}<br/>
             Domain: {import.meta.env.VITE_DOMAIN || 'Not set'}
           </div>
         )}

@@ -1090,10 +1090,54 @@ body {
     margin: 10px;
   }
   
-  .security-badges {
-    flex-direction: column;
-    align-items: center;
-  }
+.security-badges {
+  flex-direction: column;
+  align-items: center;
+}
+}
+
+.upload-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #006d5b;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.upload-btn:hover {
+  background-color: #009178;
+}
+
+.admin-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  backdrop-filter: blur(10px);
+}
+
+.admin-content {
+  background: #1a1a1a;
+  border: 2px solid #00d4aa;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  font-family: 'Inter', sans-serif;
+  color: #eee;
+}
+
+.admin-content h2 {
+  margin: 0 0 10px;
+  color: #00d4aa;
 }
 
 /* MAZLABZ Enterprise Solutions */
