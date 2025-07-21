@@ -3,6 +3,7 @@ import './App.css'
 import LeadCapture from './components/LeadCapture'
 import ROICalculator from './components/ROICalculator'
 import PaymentProcessor from './components/PaymentProcessor'
+import AdminDashboard from './components/AdminDashboard'
 import ExifReader from 'exifreader'
 import { PDFDocument } from 'pdf-lib'
 
@@ -20,6 +21,7 @@ const App = () => {
   const [sessionId, setSessionId] = useState(null)
   const [uploadedFiles, setUploadedFiles] = useState([])
   const [metadata, setMetadata] = useState([])
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false)
   const [systemStatus, setSystemStatus] = useState({ cpu: 0, memory: 0, files: 0 })
   const inputRef = useRef(null)
   const terminalRef = useRef(null)
@@ -73,6 +75,7 @@ const App = () => {
       '  upload       - Select files for analysis',
       '  files        - List uploaded files',
       '  metadata     - Display extracted metadata',
+      '  admin        - Administrative dashboard',
       '  clear        - Clear terminal output',
       '  exit         - Terminate session',
       ''
@@ -436,6 +439,11 @@ const App = () => {
       return lines
     },
 
+    admin: () => {
+      openAdmin()
+      return []
+    },
+
     clear: () => {
       setOutput([])
       return []
@@ -645,6 +653,11 @@ const App = () => {
     setOutput(prev => [...prev, { type: 'success', content: 'Opening enterprise consultation request...' }])
   }
 
+  const openAdmin = () => {
+    setShowAdminDashboard(true)
+    setOutput(prev => [...prev, { type: 'success', content: 'Opening admin dashboard...' }])
+  }
+
   const handleLeadSubmit = (formData) => {
     setOutput(prev => [...prev, 
       { type: 'success', content: `Enterprise inquiry received from ${formData.company}` },
@@ -718,9 +731,18 @@ const App = () => {
       )}
 
       {showPaymentProcessor && (
-        <PaymentProcessor 
+        <PaymentProcessor
           onClose={() => setShowPaymentProcessor(false)}
           projectData={projectData}
+        />
+      )}
+
+      {showAdminDashboard && (
+        <AdminDashboard
+          onClose={() => setShowAdminDashboard(false)}
+          files={uploadedFiles}
+          metadata={metadata}
+          status={systemStatus}
         />
       )}
     </div>
