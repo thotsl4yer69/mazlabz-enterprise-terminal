@@ -76,7 +76,7 @@ const App = () => {
       '  upload       - Select files for analysis',
       '  files        - List uploaded files',
       '  metadata     - Display extracted metadata',
-      '  admin        - Administrative dashboard',
+      '  MAZLAB       - Administrative dashboard',
       '  clear        - Clear terminal output',
       '  exit         - Terminate session',
       ''
@@ -440,7 +440,7 @@ const App = () => {
       return lines
     },
 
-    admin: () => {
+    mazlab: () => {
       setAwaitingAdminPassword(true)
       return ['Admin access requires password:', 'Enter password:']
     },
@@ -537,7 +537,7 @@ const App = () => {
         fetch('/api/research/behavioral/track', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId, command: 'admin-password' })
+          body: JSON.stringify({ sessionId, command: 'mazlab-password' })
         }).catch(() => {})
       }
       setCurrentLine('')
