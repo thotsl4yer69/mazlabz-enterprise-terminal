@@ -9,40 +9,45 @@ const createModel = () => {
   glansMat.color.set(0xdc9a88)
 
   const shaftPts = [
-    { x: 1.0, y: 0 },
-    { x: 1.1, y: -1 },
-    { x: 1.05, y: -5 },
-    { x: 0.95, y: -6 }
+    { x: 1.25, y: 0 },
+    { x: 1.25, y: -0.8 },
+    { x: 1.18, y: -2.0 },
+    { x: 1.1, y: -3.5 },
+    { x: 1.0, y: -5.0 },
+    { x: 0.95, y: -5.8 }
   ]
   const shaft = new THREE.LatheGeometry(shaftPts.map(p => new THREE.Vector2(p.x, p.y)), 64)
   group.add(new THREE.Mesh(shaft, skin))
 
   const glansPts = [
-    { x: 0.01, y: -5.9 },
-    { x: 0.9, y: -6.0 },
-    { x: 1.1, y: -6.7 },
-    { x: 0.9, y: -7.5 },
-    { x: 0.4, y: -7.7 },
-    { x: 0.01, y: -7.6 }
+    { x: 0.95, y: -5.8 },
+    { x: 1.05, y: -6.2 },
+    { x: 1.1, y: -6.8 },
+    { x: 0.98, y: -7.4 },
+    { x: 0.6, y: -7.8 },
+    { x: 0.1, y: -8.0 }
   ]
   const glans = new THREE.LatheGeometry(glansPts.map(p => new THREE.Vector2(p.x, p.y)), 64)
   group.add(new THREE.Mesh(glans, glansMat))
 
   const foreskinPts = [
-    { x: 0.95, y: -5.5 },
-    { x: 1.1, y: -6.0 },
-    { x: 1.2, y: -7.0 },
-    { x: 1.0, y: -8.2 },
-    { x: 0.5, y: -8.5 },
-    { x: 0.2, y: -8.3 }
+    { x: 1.0, y: -5.2 },
+    { x: 1.15, y: -5.8 },
+    { x: 1.25, y: -6.8 },
+    { x: 1.05, y: -7.9 },
+    { x: 0.6, y: -8.3 },
+    { x: 0.3, y: -8.2 }
   ]
   const foreskin = new THREE.LatheGeometry(foreskinPts.map(p => new THREE.Vector2(p.x, p.y)), 64)
   group.add(new THREE.Mesh(foreskin, skin))
 
-  const scrotum = new THREE.SphereGeometry(2.2, 64, 64)
-  const scrot = new THREE.Mesh(scrotum, skin)
-  scrot.position.y = -1.8
-  group.add(scrot)
+  const ballGeo = new THREE.SphereGeometry(1.4, 48, 36)
+  const leftBall = new THREE.Mesh(ballGeo, skin)
+  leftBall.position.set(-0.8, -1.6, 0)
+  const rightBall = leftBall.clone()
+  rightBall.position.x = 0.8
+  group.add(leftBall)
+  group.add(rightBall)
 
   return group
 }

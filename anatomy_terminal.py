@@ -24,18 +24,16 @@ def rotation_matrix(axis, theta):
     ])
 
 
-def make_anatomical_model(segments=40, rings=20):
+def make_anatomical_model(segments=50, rings=24):
     length = 6.0
-    radius = 1.0
+    base_r = 1.3
     verts = []
     # shaft
     for i in range(segments):
-        z = (length / (segments - 1)) * i
-        taper = 0.8 + 0.2 * np.cos(z / length * np.pi)
-        if z > length * 0.9:
-            taper *= 1 - (z - length * 0.9) / (length * 0.1)
-        r = radius * taper
-        curve = 0.2 * np.sin(z / length * np.pi)
+        z = (length * 0.9 / (segments - 1)) * i
+        taper = 1 - 0.3 * (z / length)
+        r = base_r * taper
+        curve = 0.25 * np.sin(z / length * np.pi)
         for j in range(rings):
             t = 2 * np.pi * j / rings
             verts.append([
@@ -45,11 +43,11 @@ def make_anatomical_model(segments=40, rings=20):
             ])
 
     # glans
-    tip_z = length / 2
+    tip_z = length * 0.9 - length / 2
     for i in range(rings // 2 + 1):
         phi = (np.pi / 2) * i / (rings // 2)
-        r = radius * 0.9 * np.cos(phi)
-        z = tip_z + radius * 0.9 * np.sin(phi)
+        r = base_r * 0.8 * np.cos(phi)
+        z = tip_z + base_r * 0.8 * np.sin(phi)
         for j in range(rings):
             t = 2 * np.pi * j / rings
             verts.append([
@@ -59,9 +57,9 @@ def make_anatomical_model(segments=40, rings=20):
             ])
 
     # scrotum
-    ball_r = radius * 0.9
-    ball_z = -length / 2 - ball_r * 0.5
-    offset = radius * 0.8
+    ball_r = 1.4
+    ball_z = -length / 2 - ball_r * 0.3
+    offset = 0.8
     for sx in (-offset, offset):
         for i in range(rings + 1):
             phi = np.pi * i / rings
