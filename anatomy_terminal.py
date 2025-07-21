@@ -24,23 +24,22 @@ def rotation_matrix(axis, theta):
     ])
 
 
-def make_anatomical_model(segments=50, rings=24):
-    length = 6.0
-    base_r = 1.3
+def make_anatomical_model(segments=60, rings=32):
+    length = 7.5
+    base_r = 1.25
     verts = []
-    # shaft
+    # shaft with slight curvature and taper
     for i in range(segments):
-        z = (length * 0.9 / (segments - 1)) * i
-        taper = 1 - 0.3 * (z / length)
+        z = (length * 0.85 / (segments - 1)) * i
+        taper = 1 - 0.35 * (z / length)
         r = base_r * taper
-        curve = 0.25 * np.sin(z / length * np.pi)
+        curve_y = 0.3 * np.sin(z / length * np.pi)
+        offset_x = 0.2 * np.sin(z / length)
         for j in range(rings):
             t = 2 * np.pi * j / rings
-            verts.append([
-                r * np.cos(t),
-                r * np.sin(t) + curve,
-                z - length / 2,
-            ])
+            x = r * np.cos(t) + offset_x
+            y = r * np.sin(t) + curve_y
+            verts.append([x, y, z - length / 2])
 
     # glans
     tip_z = length * 0.9 - length / 2
@@ -71,6 +70,17 @@ def make_anatomical_model(segments=50, rings=24):
                 y = r * np.sin(t)
                 verts.append([x, y, z])
 
+    # pelvic attachment
+    root_len = length * 0.15
+    root_r = base_r * 0.9
+    for i in range(segments // 4):
+        z = -root_len * i / (segments // 4)
+        for j in range(rings):
+            t = 2 * np.pi * j / rings
+            x = root_r * np.cos(t)
+            y = root_r * np.sin(t)
+            verts.append([x, y, z - length / 2])
+
     return np.array(verts)
 
 
@@ -82,8 +92,8 @@ def project(points):
     return x, y, z
 
 
-def render_frame(vertices, angle):
-    R = rotation_matrix([0, 1, 0], angle)
+def render_frame(vertices, yaw, pitch=0.0):
+    R = rotation_matrix([0, 1, 0], yaw) @ rotation_matrix([1, 0, 0], pitch)
     pts = vertices @ R.T
     x, y, z = project(pts)
     buf = np.full((HEIGHT, WIDTH), " ")
@@ -105,14 +115,16 @@ def clear():
 
 def main():
     vertices = make_anatomical_model()
-    angle = 0.0
+    yaw = 0.0
+    pitch = 0.2
     try:
         while True:
             clear()
-            frame = render_frame(vertices, angle)
+            frame = render_frame(vertices, yaw, pitch)
             sys.stdout.write(frame)
             sys.stdout.flush()
-            angle += 0.1
+            yaw += 0.1
+            pitch += 0.02
             time.sleep(1/30)
     except KeyboardInterrupt:
         pass
