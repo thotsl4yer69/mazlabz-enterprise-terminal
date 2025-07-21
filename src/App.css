@@ -1161,10 +1161,9 @@ body {
   border-radius: 8px;
 }
 
-.ascii-display {
-  font-family: monospace;
-  line-height: 1;
-  color: #00d4aa;
+.anatomy-canvas {
+  width: 600px;
+  height: 400px;
 }
 
 /* MAZLABZ Enterprise Solutions */

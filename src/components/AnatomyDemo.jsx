@@ -1,180 +1,112 @@
 import React, { useEffect, useRef } from 'react'
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-const WIDTH = 80
-const HEIGHT = 40
-const ASPECT = WIDTH / HEIGHT
-const CHARS = Array.from(' .:-=+*#%@')
-const DEPTH = 20
-const K = 15
+const createModel = () => {
+  const group = new THREE.Group()
+  const skin = new THREE.MeshStandardMaterial({ color: 0xc5a894, roughness: 0.8, metalness: 0.1 })
+  const glansMat = skin.clone();
+  glansMat.color.set(0xdc9a88)
 
-const rotationMatrix = (axis, theta) => {
-  const [x, y, z] = axis
-  const n = Math.hypot(x, y, z)
-  const [u, v, w] = [x / n, y / n, z / n]
-  const cos = Math.cos(theta / 2)
-  const sin = Math.sin(theta / 2)
-  const b = -u * sin
-  const c = -v * sin
-  const d = -w * sin
-  const aa = cos * cos
-  const bb = b * b
-  const cc = c * c
-  const dd = d * d
-  const bc = b * c
-  const ad = cos * d
-  const ac = cos * c
-  const ab = cos * b
-  const bd = b * d
-  const cd = c * d
-  return [
-    [aa + bb - cc - dd, 2 * (bc + ad), 2 * (bd - ac)],
-    [2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab)],
-    [2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc]
+  const shaftPts = [
+    { x: 1.0, y: 0 },
+    { x: 1.1, y: -1 },
+    { x: 1.05, y: -5 },
+    { x: 0.95, y: -6 }
   ]
-}
+  const shaft = new THREE.LatheGeometry(shaftPts.map(p => new THREE.Vector2(p.x, p.y)), 64)
+  group.add(new THREE.Mesh(shaft, skin))
 
-const makeAnatomicalModel = (segments = 40, rings = 20) => {
-  const length = 6
-  const radius = 1
-  const verts = []
-  const norms = []
+  const glansPts = [
+    { x: 0.01, y: -5.9 },
+    { x: 0.9, y: -6.0 },
+    { x: 1.1, y: -6.7 },
+    { x: 0.9, y: -7.5 },
+    { x: 0.4, y: -7.7 },
+    { x: 0.01, y: -7.6 }
+  ]
+  const glans = new THREE.LatheGeometry(glansPts.map(p => new THREE.Vector2(p.x, p.y)), 64)
+  group.add(new THREE.Mesh(glans, glansMat))
 
-  // shaft
-  for (let i = 0; i < segments; i++) {
-    const z = (length / (segments - 1)) * i
-    let taper = 0.8 + 0.2 * Math.cos((z / length) * Math.PI)
-    if (z > length * 0.9) {
-      const t = (z - length * 0.9) / (length * 0.1)
-      taper *= 1 - t
-    }
-    const r = radius * taper
-    const curve = 0.2 * Math.sin((z / length) * Math.PI)
-    for (let j = 0; j < rings; j++) {
-      const t = (2 * Math.PI * j) / rings
-      verts.push([
-        r * Math.cos(t),
-        r * Math.sin(t) + curve,
-        z - length / 2
-      ])
-      norms.push([Math.cos(t), Math.sin(t), 0])
-    }
-  }
+  const foreskinPts = [
+    { x: 0.95, y: -5.5 },
+    { x: 1.1, y: -6.0 },
+    { x: 1.2, y: -7.0 },
+    { x: 1.0, y: -8.2 },
+    { x: 0.5, y: -8.5 },
+    { x: 0.2, y: -8.3 }
+  ]
+  const foreskin = new THREE.LatheGeometry(foreskinPts.map(p => new THREE.Vector2(p.x, p.y)), 64)
+  group.add(new THREE.Mesh(foreskin, skin))
 
-  // glans
-  const tipZ = length / 2
-  for (let i = 0; i <= rings / 2; i++) {
-    const phi = (Math.PI / 2) * (i / (rings / 2))
-    const r = radius * 0.9 * Math.cos(phi)
-    const z = tipZ + radius * 0.9 * Math.sin(phi)
-    for (let j = 0; j < rings; j++) {
-      const t = (2 * Math.PI * j) / rings
-      verts.push([
-        r * Math.cos(t),
-        r * Math.sin(t),
-        z
-      ])
-      norms.push([
-        Math.cos(t) * Math.cos(phi),
-        Math.sin(t) * Math.cos(phi),
-        Math.sin(phi)
-      ])
-    }
-  }
+  const scrotum = new THREE.SphereGeometry(2.2, 64, 64)
+  const scrot = new THREE.Mesh(scrotum, skin)
+  scrot.position.y = -1.8
+  group.add(scrot)
 
-  // scrotum
-  const ballR = radius * 0.9
-  const ballZ = -length / 2 - ballR * 0.5
-  const offset = radius * 0.8
-  for (const sx of [-offset, offset]) {
-    for (let i = 0; i <= rings; i++) {
-      const phi = Math.PI * (i / rings)
-      const r = ballR * Math.sin(phi)
-      const z = ballZ + ballR * Math.cos(phi)
-      for (let j = 0; j < rings; j++) {
-        const t = (2 * Math.PI * j) / rings
-        const x = sx + r * Math.cos(t)
-        const y = r * Math.sin(t)
-        verts.push([x, y, z])
-        norms.push([
-          (x - sx) / ballR,
-          y / ballR,
-          (z - ballZ) / ballR
-        ])
-      }
-    }
-  }
-
-  return { verts, norms }
-}
-
-const project = pts => {
-  const x = []
-  const y = []
-  const zvals = []
-  for (const p of pts) {
-    const z = p[2] + DEPTH
-    const f = K / z
-    x.push(Math.floor(p[0] * f * ASPECT + WIDTH / 2))
-    y.push(Math.floor(p[1] * f + HEIGHT / 2))
-    zvals.push(z)
-  }
-  return [x, y, zvals]
-}
-
-const multiply = (A, B) => A.map((r, i) => B[0].map((_, j) => r.reduce((s, _, k) => s + A[i][k] * B[k][j], 0)))
-
-const renderFrame = (model, angle) => {
-  const { verts, norms } = model
-  const R = multiply(rotationMatrix([0, 1, 0], angle), rotationMatrix([1, 0, 0], angle * 0.5))
-  const rotated = verts.map((v, idx) => [
-    R[0][0] * v[0] + R[0][1] * v[1] + R[0][2] * v[2],
-    R[1][0] * v[0] + R[1][1] * v[1] + R[1][2] * v[2],
-    R[2][0] * v[0] + R[2][1] * v[1] + R[2][2] * v[2]
-  ])
-  const normals = norms.map(n => [
-    R[0][0] * n[0] + R[0][1] * n[1] + R[0][2] * n[2],
-    R[1][0] * n[0] + R[1][1] * n[1] + R[1][2] * n[2],
-    R[2][0] * n[0] + R[2][1] * n[1] + R[2][2] * n[2]
-  ])
-  const [xs, ys, zs] = project(rotated)
-  const buf = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(' '))
-  const zbuf = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(Infinity))
-  for (let i = 0; i < xs.length; i++) {
-    const xi = xs[i]
-    const yi = ys[i]
-    const zi = zs[i]
-    if (xi < 0 || xi >= WIDTH || yi < 0 || yi >= HEIGHT) continue
-    if (zi < zbuf[yi][xi]) {
-      zbuf[yi][xi] = zi
-      const norm = normals[i]
-      const light = [-0.5, 0.5, 1]
-      const nl = (norm[0] * light[0] + norm[1] * light[1] + norm[2] * light[2]) / Math.hypot(...light)
-      const shade = Math.max(0, Math.min(0.999, (nl + 1) / 2))
-      const idx = Math.floor(shade * (CHARS.length - 1))
-      buf[yi][xi] = CHARS[idx]
-    }
-  }
-  return buf.map(row => row.join('')).join('\n')
+  return group
 }
 
 const AnatomyDemo = ({ onClose }) => {
-  const ref = useRef(null)
+  const mount = useRef(null)
 
   useEffect(() => {
-    const model = makeAnatomicalModel()
-    let angle = 0
-    const id = setInterval(() => {
-      if (ref.current) ref.current.textContent = renderFrame(model, angle)
-      angle += 0.1
-    }, 33)
-    return () => clearInterval(id)
+    const width = mount.current.clientWidth
+    const height = mount.current.clientHeight
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.setSize(width, height)
+    mount.current.appendChild(renderer.domElement)
+
+    const scene = new THREE.Scene()
+    scene.background = new THREE.Color(0x222228)
+    const camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 100)
+    camera.position.set(0, 0, 25)
+
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableDamping = true
+    controls.target.set(0, -2, 0)
+
+    scene.add(new THREE.DirectionalLight(0xffffff, 2).position.set(10, 10, 10))
+    scene.add(new THREE.DirectionalLight(0xffe0d0, 0.7).position.set(-10, 5, 5))
+    scene.add(new THREE.DirectionalLight(0xd0e0ff, 1.5).position.set(0, 5, -15))
+    scene.add(new THREE.HemisphereLight(0x404060, 0x202030, 1))
+
+    const model = createModel()
+    scene.add(model)
+
+    const onResize = () => {
+      const w = mount.current.clientWidth
+      const h = mount.current.clientHeight
+      renderer.setSize(w, h)
+      camera.aspect = w / h
+      camera.updateProjectionMatrix()
+    }
+    window.addEventListener('resize', onResize)
+
+    let frame
+    const animate = () => {
+      controls.update()
+      model.rotation.y += 0.001
+      renderer.render(scene, camera)
+      frame = requestAnimationFrame(animate)
+    }
+    animate()
+
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('resize', onResize)
+      renderer.dispose()
+      mount.current.removeChild(renderer.domElement)
+    }
   }, [])
 
   return (
     <div className="anatomy-modal">
       <div className="anatomy-content">
         <button className="close-btn" onClick={onClose}>&times;</button>
-        <pre className="ascii-display" ref={ref}></pre>
+        <div className="anatomy-canvas" ref={mount}></div>
       </div>
     </div>
   )
