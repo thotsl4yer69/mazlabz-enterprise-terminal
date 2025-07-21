@@ -38,6 +38,8 @@ const makeAnatomicalModel = (segments = 40, rings = 20) => {
   const radius = 1
   const verts = []
   const norms = []
+
+  // shaft
   for (let i = 0; i < segments; i++) {
     const z = (length / (segments - 1)) * i
     let taper = 0.8 + 0.2 * Math.cos((z / length) * Math.PI)
@@ -57,6 +59,51 @@ const makeAnatomicalModel = (segments = 40, rings = 20) => {
       norms.push([Math.cos(t), Math.sin(t), 0])
     }
   }
+
+  // glans
+  const tipZ = length / 2
+  for (let i = 0; i <= rings / 2; i++) {
+    const phi = (Math.PI / 2) * (i / (rings / 2))
+    const r = radius * 0.9 * Math.cos(phi)
+    const z = tipZ + radius * 0.9 * Math.sin(phi)
+    for (let j = 0; j < rings; j++) {
+      const t = (2 * Math.PI * j) / rings
+      verts.push([
+        r * Math.cos(t),
+        r * Math.sin(t),
+        z
+      ])
+      norms.push([
+        Math.cos(t) * Math.cos(phi),
+        Math.sin(t) * Math.cos(phi),
+        Math.sin(phi)
+      ])
+    }
+  }
+
+  // scrotum
+  const ballR = radius * 0.9
+  const ballZ = -length / 2 - ballR * 0.5
+  const offset = radius * 0.8
+  for (const sx of [-offset, offset]) {
+    for (let i = 0; i <= rings; i++) {
+      const phi = Math.PI * (i / rings)
+      const r = ballR * Math.sin(phi)
+      const z = ballZ + ballR * Math.cos(phi)
+      for (let j = 0; j < rings; j++) {
+        const t = (2 * Math.PI * j) / rings
+        const x = sx + r * Math.cos(t)
+        const y = r * Math.sin(t)
+        verts.push([x, y, z])
+        norms.push([
+          (x - sx) / ballR,
+          y / ballR,
+          (z - ballZ) / ballR
+        ])
+      }
+    }
+  }
+
   return { verts, norms }
 }
 

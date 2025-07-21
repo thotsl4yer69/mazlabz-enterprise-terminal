@@ -27,15 +27,53 @@ def rotation_matrix(axis, theta):
 def make_anatomical_model(segments=40, rings=20):
     length = 6.0
     radius = 1.0
-    z = np.linspace(0, length, segments)
-    theta = np.linspace(0, 2 * np.pi, rings)
-    z_grid, t_grid = np.meshgrid(z, theta)
-    taper = 0.8 + 0.2 * np.cos(z_grid / length * np.pi)
-    r_grid = radius * taper
-    x = r_grid * np.cos(t_grid)
-    y = r_grid * np.sin(t_grid) + 0.2 * np.sin(z_grid / length * np.pi)
-    verts = np.stack((x, y, z_grid - length / 2), axis=-1)
-    return verts.reshape(-1, 3)
+    verts = []
+    # shaft
+    for i in range(segments):
+        z = (length / (segments - 1)) * i
+        taper = 0.8 + 0.2 * np.cos(z / length * np.pi)
+        if z > length * 0.9:
+            taper *= 1 - (z - length * 0.9) / (length * 0.1)
+        r = radius * taper
+        curve = 0.2 * np.sin(z / length * np.pi)
+        for j in range(rings):
+            t = 2 * np.pi * j / rings
+            verts.append([
+                r * np.cos(t),
+                r * np.sin(t) + curve,
+                z - length / 2,
+            ])
+
+    # glans
+    tip_z = length / 2
+    for i in range(rings // 2 + 1):
+        phi = (np.pi / 2) * i / (rings // 2)
+        r = radius * 0.9 * np.cos(phi)
+        z = tip_z + radius * 0.9 * np.sin(phi)
+        for j in range(rings):
+            t = 2 * np.pi * j / rings
+            verts.append([
+                r * np.cos(t),
+                r * np.sin(t),
+                z,
+            ])
+
+    # scrotum
+    ball_r = radius * 0.9
+    ball_z = -length / 2 - ball_r * 0.5
+    offset = radius * 0.8
+    for sx in (-offset, offset):
+        for i in range(rings + 1):
+            phi = np.pi * i / rings
+            r = ball_r * np.sin(phi)
+            z = ball_z + ball_r * np.cos(phi)
+            for j in range(rings):
+                t = 2 * np.pi * j / rings
+                x = sx + r * np.cos(t)
+                y = r * np.sin(t)
+                verts.append([x, y, z])
+
+    return np.array(verts)
 
 
 def project(points):
