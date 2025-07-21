@@ -3,6 +3,8 @@ import './App.css'
 import LeadCapture from './components/LeadCapture'
 import ROICalculator from './components/ROICalculator'
 import PaymentProcessor from './components/PaymentProcessor'
+import ExifReader from 'exifreader'
+import { PDFDocument } from 'pdf-lib'
 
 const App = () => {
   const [isBooted, setIsBooted] = useState(false)
@@ -15,8 +17,13 @@ const App = () => {
   const [showROICalculator, setShowROICalculator] = useState(false)
   const [showPaymentProcessor, setShowPaymentProcessor] = useState(false)
   const [projectData, setProjectData] = useState(null)
+  const [sessionId, setSessionId] = useState(null)
+  const [uploadedFiles, setUploadedFiles] = useState([])
+  const [metadata, setMetadata] = useState([])
+  const [systemStatus, setSystemStatus] = useState({ cpu: 0, memory: 0, files: 0 })
   const inputRef = useRef(null)
   const terminalRef = useRef(null)
+  const fileInputRef = useRef(null)
 
   const bootSequence = [
     'MAZLABZ.ENTERPRISE v3.2.1 - INITIALIZING...',
@@ -63,6 +70,9 @@ const App = () => {
       '  roi          - Calculate potential ROI',
       '  pay          - Secure project with downpayment',
       '  schedule     - Book executive meeting',
+      '  upload       - Select files for analysis',
+      '  files        - List uploaded files',
+      '  metadata     - Display extracted metadata',
       '  clear        - Clear terminal output',
       '  exit         - Terminate session',
       ''
@@ -331,6 +341,9 @@ const App = () => {
       '',
       'Current Status: ONLINE - ACCEPTING ENTERPRISE PROJECTS',
       'Last Updated: ' + new Date().toLocaleString(),
+      `CPU Usage: ${systemStatus.cpu}%`,
+      `Memory Usage: ${systemStatus.memory}%`,
+      `Uploaded Files: ${systemStatus.files}`,
       '',
       'CAPACITY ANALYSIS:',
       'Current Utilization: 75%',
@@ -403,6 +416,26 @@ const App = () => {
       ''
     ],
 
+    upload: () => openFileDialog(),
+
+    files: () => {
+      if (uploadedFiles.length === 0) return ['No files uploaded']
+      return uploadedFiles.map(f => f.name)
+    },
+
+    metadata: () => {
+      if (metadata.length === 0) return ['No metadata extracted']
+      const lines = []
+      metadata.forEach(file => {
+        lines.push(`File: ${file.name}`)
+        Object.entries(file.data || {}).forEach(([k, v]) => {
+          if (v) lines.push(`  ${k}: ${v}`)
+        })
+        lines.push('')
+      })
+      return lines
+    },
+
     clear: () => {
       setOutput([])
       return []
@@ -447,6 +480,32 @@ const App = () => {
     }
   }, [output])
 
+  // Initialize research session
+  useEffect(() => {
+    const createSession = async () => {
+      try {
+        const res = await fetch('/api/research/session/create', { method: 'POST' })
+        const data = await res.json()
+        setSessionId(data.sessionId)
+      } catch (err) {
+        console.error('Session creation failed', err)
+      }
+    }
+    createSession()
+  }, [])
+
+  // Update simulated system status
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSystemStatus({
+        cpu: Math.floor(Math.random() * 40) + 10,
+        memory: Math.floor(Math.random() * 20) + 40,
+        files: uploadedFiles.length
+      })
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [uploadedFiles.length])
+
   // Listen for lead capture events
   useEffect(() => {
     const handleOpenLeadCapture = () => setShowLeadCapture(true)
@@ -487,7 +546,15 @@ const App = () => {
         { type: 'output', content: '' }
       ])
     }
-    
+
+    if (sessionId) {
+      fetch('/api/research/behavioral/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, command: trimmedCmd })
+      }).catch(() => {})
+    }
+
     setCurrentLine('')
   }
 
@@ -519,6 +586,49 @@ const App = () => {
   const copyEmail = () => {
     navigator.clipboard.writeText('mazlabz.ai@gmail.com')
     setOutput(prev => [...prev, { type: 'success', content: 'Enterprise email copied to clipboard!' }])
+  }
+
+  const handleFiles = async (e) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    setUploadedFiles(prev => [...prev, ...files.map(f => ({ name: f.name }))])
+    for (const file of files) {
+      const arrayBuffer = await file.arrayBuffer()
+      let data = {}
+      try {
+        if (file.type.startsWith('image/')) {
+          data = ExifReader.load(arrayBuffer)
+        } else if (file.type === 'application/pdf') {
+          const pdfDoc = await PDFDocument.load(arrayBuffer)
+          data = {
+            title: pdfDoc.getTitle(),
+            author: pdfDoc.getAuthor(),
+            subject: pdfDoc.getSubject(),
+            keywords: pdfDoc.getKeywords(),
+            created: pdfDoc.getCreationDate()?.toISOString(),
+            modified: pdfDoc.getModificationDate()?.toISOString(),
+            pageCount: pdfDoc.getPageCount()
+          }
+        }
+      } catch (err) {
+        console.error('Metadata extraction failed', err)
+      }
+      setMetadata(prev => [...prev, { name: file.name, data }])
+      if (sessionId) {
+        fetch('/api/research/metadata/extract', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId, file: file.name, metadata: data })
+        }).catch(() => {})
+      }
+    }
+    e.target.value = ''
+  }
+
+  const openFileDialog = () => {
+    fileInputRef.current?.click()
+    setOutput(prev => [...prev, { type: 'success', content: 'Opening file upload dialog...' }])
+    return []
   }
 
   const openQuote = () => {
@@ -575,9 +685,18 @@ const App = () => {
           </div>
         )}
       </div>
+      <input
+        type="file"
+        multiple
+        accept="application/pdf,image/*"
+        ref={fileInputRef}
+        onChange={handleFiles}
+        style={{ display: 'none' }}
+      />
+      <button className="upload-btn" onClick={openFileDialog}>Select Files for Analysis</button>
 
       {showLeadCapture && (
-        <LeadCapture 
+        <LeadCapture
           onClose={() => setShowLeadCapture(false)}
           onSubmit={handleLeadSubmit}
         />

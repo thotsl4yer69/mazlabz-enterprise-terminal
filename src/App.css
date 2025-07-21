@@ -1090,10 +1090,24 @@ body {
     margin: 10px;
   }
   
-  .security-badges {
-    flex-direction: column;
-    align-items: center;
-  }
+.security-badges {
+  flex-direction: column;
+  align-items: center;
+}
+}
+
+.upload-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #006d5b;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.upload-btn:hover {
+  background-color: #009178;
 }
 
 /* MAZLABZ Enterprise Solutions */

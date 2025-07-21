@@ -4,7 +4,7 @@ Professional terminal interface with real Stripe payment processing for Fortune 
 
 ## 🚀 Live Demo
 - **Production URL**: https://mazlabz-terminal-894383524313.us-central1.run.app/
-- **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`
+- **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`
 
 ## 💳 Payment Integration
 
@@ -36,6 +36,10 @@ VITE_LEAD_ENDPOINT=https://your-api.example.com/leads
 3. **Digital Transformation** - $30,000 AUD
 4. **Fortune 500 Program** - $100,000 AUD
 
+## 📄 File Upload & Metadata
+
+Use the `upload` command or the **Select Files for Analysis** button to submit PDFs or images for metadata extraction. The system extracts EXIF data from images and PDF metadata for research analysis. View your uploaded files with the `files` command and display extracted data with `metadata`.
+
 ## 🛠️ Development
 
 ```bash
@@ -57,4 +61,4 @@ Deploys automatically via GitHub Actions to Google Cloud Run.
 
 ---
 
-**⚠️ IMPORTANT**: This processes real payments. Test thoroughly before sharing with prospects
+**⚠️ IMPORTANT**: This processes real payments. Test thoroughly before sharing with prospects.
