@@ -21,21 +21,21 @@ This application processes **REAL payments** through Stripe. The payment system 
 Required for deployment:
 
 ```env
-VITE_STRIPE_PUBLISHABLE_KEY=pk_live_51RjF0vH64eFgP6Gi...
-VITE_STRIPE_STRATEGIC_PRICE=price_1RjyW4H64eFgP6Gi...
-VITE_STRIPE_ENTERPRISE_PRICE=price_1RjyWPH64eFgP6Gi...
-VITE_STRIPE_TRANSFORMATION_PRICE=price_1RjyWjH64eFgP6Gi...
-VITE_STRIPE_FORTUNE500_PRICE=price_1RjyX6H64eFgP6Gi...
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51RjF1DQdNvblnpPjsuIGahBdZQWUiJs122VCNPDEPRfxO6COCQyVCCY72NzdpRbUUqPV4yguXoEpHEhIVfMcPkZE00zaNqtefA
+VITE_STRIPE_BASIC_PRICE=price_abc123
+VITE_STRIPE_STANDARD_PRICE=price_def456
+VITE_STRIPE_ENTERPRISE_PRICE=price_ghi789
+VITE_STRIPE_GOV_PRICE=price_xyz000
 VITE_LEAD_ENDPOINT=https://your-api.example.com/leads
 VITE_FILE_EMAIL_ENDPOINT=https://your-api.example.com/email/upload
 ```
 
 ## 📦 Enterprise Packages
 
-1. **Strategic Implementation** - $5,000 AUD
-2. **Enterprise Platform** - $15,000 AUD  
-3. **Digital Transformation** - $30,000 AUD
-4. **Fortune 500 Program** - $100,000 AUD
+1. **Basic Implementation** - $5,000 AUD
+2. **Standard Platform** - $15,000 AUD
+3. **Enterprise Transformation** - $30,000 AUD
+4. **Government Program** - $100,000 AUD
 
 ## 📄 File Upload & Metadata
 
