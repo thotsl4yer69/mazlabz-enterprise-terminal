@@ -37,9 +37,14 @@ const makeAnatomicalModel = (segments = 40, rings = 20) => {
   const length = 6
   const radius = 1
   const verts = []
+  const norms = []
   for (let i = 0; i < segments; i++) {
     const z = (length / (segments - 1)) * i
-    const taper = 0.8 + 0.2 * Math.cos((z / length) * Math.PI)
+    let taper = 0.8 + 0.2 * Math.cos((z / length) * Math.PI)
+    if (z > length * 0.9) {
+      const t = (z - length * 0.9) / (length * 0.1)
+      taper *= 1 - t
+    }
     const r = radius * taper
     const curve = 0.2 * Math.sin((z / length) * Math.PI)
     for (let j = 0; j < rings; j++) {
@@ -49,9 +54,10 @@ const makeAnatomicalModel = (segments = 40, rings = 20) => {
         r * Math.sin(t) + curve,
         z - length / 2
       ])
+      norms.push([Math.cos(t), Math.sin(t), 0])
     }
   }
-  return verts
+  return { verts, norms }
 }
 
 const project = pts => {
@@ -68,12 +74,20 @@ const project = pts => {
   return [x, y, zvals]
 }
 
-const renderFrame = (vertices, angle) => {
-  const R = rotationMatrix([0, 1, 0], angle)
-  const rotated = vertices.map(v => [
+const multiply = (A, B) => A.map((r, i) => B[0].map((_, j) => r.reduce((s, _, k) => s + A[i][k] * B[k][j], 0)))
+
+const renderFrame = (model, angle) => {
+  const { verts, norms } = model
+  const R = multiply(rotationMatrix([0, 1, 0], angle), rotationMatrix([1, 0, 0], angle * 0.5))
+  const rotated = verts.map((v, idx) => [
     R[0][0] * v[0] + R[0][1] * v[1] + R[0][2] * v[2],
     R[1][0] * v[0] + R[1][1] * v[1] + R[1][2] * v[2],
     R[2][0] * v[0] + R[2][1] * v[1] + R[2][2] * v[2]
+  ])
+  const normals = norms.map(n => [
+    R[0][0] * n[0] + R[0][1] * n[1] + R[0][2] * n[2],
+    R[1][0] * n[0] + R[1][1] * n[1] + R[1][2] * n[2],
+    R[2][0] * n[0] + R[2][1] * n[1] + R[2][2] * n[2]
   ])
   const [xs, ys, zs] = project(rotated)
   const buf = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(' '))
@@ -85,7 +99,10 @@ const renderFrame = (vertices, angle) => {
     if (xi < 0 || xi >= WIDTH || yi < 0 || yi >= HEIGHT) continue
     if (zi < zbuf[yi][xi]) {
       zbuf[yi][xi] = zi
-      const shade = Math.max(0, Math.min(0.999, 1 - (zi - DEPTH) / 6))
+      const norm = normals[i]
+      const light = [-0.5, 0.5, 1]
+      const nl = (norm[0] * light[0] + norm[1] * light[1] + norm[2] * light[2]) / Math.hypot(...light)
+      const shade = Math.max(0, Math.min(0.999, (nl + 1) / 2))
       const idx = Math.floor(shade * (CHARS.length - 1))
       buf[yi][xi] = CHARS[idx]
     }
@@ -97,10 +114,10 @@ const AnatomyDemo = ({ onClose }) => {
   const ref = useRef(null)
 
   useEffect(() => {
-    const verts = makeAnatomicalModel()
+    const model = makeAnatomicalModel()
     let angle = 0
     const id = setInterval(() => {
-      if (ref.current) ref.current.textContent = renderFrame(verts, angle)
+      if (ref.current) ref.current.textContent = renderFrame(model, angle)
       angle += 0.1
     }, 33)
     return () => clearInterval(id)
