@@ -8,14 +8,18 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "deploy": "npm run build && vercel --prod"
+    "deploy": "npm run build && vercel --prod",
+    "start": "node server/index.js"
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.4.0",
     "exifreader": "^4.31.1",
+    "express": "^4.21.2",
+    "multer": "^2.0.2",
     "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
