@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import './LeadCapture.css'
 
 const LeadCapture = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({

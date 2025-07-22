@@ -1,4 +1,5 @@
 import React from 'react'
+import './AdminDashboard.css'
 
 const AdminDashboard = ({ onClose, files, metadata, status }) => (
   <div className="admin-modal">

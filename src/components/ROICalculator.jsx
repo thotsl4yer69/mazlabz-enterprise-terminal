@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import './ROICalculator.css'
 
 const ROICalculator = ({ onClose }) => {
   const [inputs, setInputs] = useState({
