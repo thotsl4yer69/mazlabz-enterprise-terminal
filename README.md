@@ -27,7 +27,7 @@ VITE_STRIPE_STANDARD_PRICE=price_def456
 VITE_STRIPE_ENTERPRISE_PRICE=price_ghi789
 VITE_STRIPE_GOV_PRICE=price_xyz000
 VITE_LEAD_ENDPOINT=https://your-api.example.com/leads
-VITE_FILE_EMAIL_ENDPOINT=https://your-api.example.com/email/upload
+VITE_FILE_EMAIL_ENDPOINT=mazlabz.ai@gmail.com
 VITE_ADMIN_PASSWORD=Adm1nSecure!2025
 ```
 
