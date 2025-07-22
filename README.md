@@ -4,7 +4,7 @@ Professional terminal interface with real Stripe payment processing for Fortune 
 
 ## 🚀 Live Demo
 - **Production URL**: https://mazlabz-terminal-894383524313.us-central1.run.app/
-- **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `MAZLAB`, `anatomy`
+- **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `MAZLAB`, `anatomy`, `viewer`
 
 ## 💳 Payment Integration
 
@@ -44,6 +44,7 @@ Use the `upload` command or the **Select Files for Analysis** button to submit P
 Admin system metrics and file listings are available with the `MAZLAB` command.
 This command prompts for the password set in `VITE_ADMIN_PASSWORD` before the dashboard opens.
 Trigger the rotating 3D ASCII anatomy demo with the `anatomy` command.
+Open the STL model viewer with the `viewer` command.
 
 ## 🛠️ Development
 

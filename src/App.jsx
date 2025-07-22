@@ -5,6 +5,7 @@ import ROICalculator from './components/ROICalculator'
 import PaymentProcessor from './components/PaymentProcessor'
 import AdminDashboard from './components/AdminDashboard'
 import AnatomyDemo from './components/AnatomyDemo'
+import ModelViewer from './components/ModelViewer'
 import ExifReader from 'exifreader'
 import { PDFDocument } from 'pdf-lib'
 
@@ -24,6 +25,7 @@ const App = () => {
   const [metadata, setMetadata] = useState([])
   const [showAdminDashboard, setShowAdminDashboard] = useState(false)
   const [showAnatomyDemo, setShowAnatomyDemo] = useState(false)
+  const [showModelViewer, setShowModelViewer] = useState(false)
   const [awaitingAdminPassword, setAwaitingAdminPassword] = useState(false)
   const [systemStatus, setSystemStatus] = useState({ cpu: 0, memory: 0, files: 0 })
   const inputRef = useRef(null)
@@ -80,6 +82,7 @@ const App = () => {
       '  metadata     - Display extracted metadata',
       '  MAZLAB       - Administrative dashboard',
       '  anatomy      - Rotating anatomy demo',
+      '  viewer       - STL model viewer',
       '  clear        - Clear terminal output',
       '  exit         - Terminate session',
       ''
@@ -445,6 +448,8 @@ const App = () => {
 
     anatomy: () => openAnatomy(),
 
+    viewer: () => openModelViewer(),
+
     mazlab: () => {
       setAwaitingAdminPassword(true)
       return ['Admin access requires password:', 'Enter password:']
@@ -688,6 +693,11 @@ const App = () => {
     setOutput(prev => [...prev, { type: 'success', content: 'Launching anatomy demo...' }])
   }
 
+  const openModelViewer = () => {
+    setShowModelViewer(true)
+    setOutput(prev => [...prev, { type: 'success', content: 'Opening model viewer...' }])
+  }
+
   const handleLeadSubmit = (formData) => {
     setOutput(prev => [...prev, 
       { type: 'success', content: `Enterprise inquiry received from ${formData.company}` },
@@ -778,6 +788,10 @@ const App = () => {
 
       {showAnatomyDemo && (
         <AnatomyDemo onClose={() => setShowAnatomyDemo(false)} />
+      )}
+
+      {showModelViewer && (
+        <ModelViewer onClose={() => setShowModelViewer(false)} />
       )}
     </div>
   )
