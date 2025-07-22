@@ -15,8 +15,12 @@
     "exifreader": "^4.31.1",
     "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
+67d4z8-codex/review-and-build-application
     "react-dom": "^18.2.0",
     "three": "^0.166.1"
+=======
+    "react-dom": "^18.2.0"
+main
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

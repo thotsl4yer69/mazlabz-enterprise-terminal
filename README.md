@@ -4,7 +4,11 @@ Professional terminal interface with real Stripe payment processing for Fortune 
 
 ## 🚀 Live Demo
 - **Production URL**: https://mazlabz-terminal-894383524313.us-central1.run.app/
+67d4z8-codex/review-and-build-application
 - **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `MAZLAB`, `anatomy`, `viewer`
+
+ - **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `admin`
+main
 
 ## 💳 Payment Integration
 
@@ -27,8 +31,11 @@ VITE_STRIPE_STANDARD_PRICE=price_def456
 VITE_STRIPE_ENTERPRISE_PRICE=price_ghi789
 VITE_STRIPE_GOV_PRICE=price_xyz000
 VITE_LEAD_ENDPOINT=https://your-api.example.com/leads
+ 67d4z8-codex/review-and-build-application
 VITE_FILE_EMAIL_ENDPOINT=mazlabz.ai@gmail.com
 VITE_ADMIN_PASSWORD=Adm1nSecure!2025
+VITE_FILE_EMAIL_ENDPOINT=https://your-api.example.com/email/upload
+main
 ```
 
 ## 📦 Enterprise Packages
@@ -41,10 +48,13 @@ VITE_ADMIN_PASSWORD=Adm1nSecure!2025
 ## 📄 File Upload & Metadata
 
 Use the `upload` command or the **Select Files for Analysis** button to submit PDFs or images for metadata extraction. The system extracts EXIF data from images and PDF metadata for research analysis. View your uploaded files with the `files` command and display extracted data with `metadata`.
+67d4z8-codex/review-and-build-application
 Admin system metrics and file listings are available with the `MAZLAB` command.
 This command prompts for the password set in `VITE_ADMIN_PASSWORD` before the dashboard opens.
 Trigger the rotating 3D ASCII anatomy demo with the `anatomy` command.
 Open the STL model viewer with the `viewer` command.
+Admin system metrics and file listings are available with the `admin` command.
+main
 
 ## 🛠️ Development
 

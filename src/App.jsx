@@ -4,8 +4,11 @@ import LeadCapture from './components/LeadCapture'
 import ROICalculator from './components/ROICalculator'
 import PaymentProcessor from './components/PaymentProcessor'
 import AdminDashboard from './components/AdminDashboard'
+67d4z8-codex/review-and-build-application
 import AnatomyDemo from './components/AnatomyDemo'
 import ModelViewer from './components/ModelViewer'
+=======
+main
 import ExifReader from 'exifreader'
 import { PDFDocument } from 'pdf-lib'
 
@@ -24,9 +27,12 @@ const App = () => {
   const [uploadedFiles, setUploadedFiles] = useState([])
   const [metadata, setMetadata] = useState([])
   const [showAdminDashboard, setShowAdminDashboard] = useState(false)
+67d4z8-codex/review-and-build-application
   const [showAnatomyDemo, setShowAnatomyDemo] = useState(false)
   const [showModelViewer, setShowModelViewer] = useState(false)
   const [awaitingAdminPassword, setAwaitingAdminPassword] = useState(false)
+
+main
   const [systemStatus, setSystemStatus] = useState({ cpu: 0, memory: 0, files: 0 })
   const inputRef = useRef(null)
   const terminalRef = useRef(null)
@@ -80,9 +86,12 @@ const App = () => {
       '  upload       - Select files for analysis',
       '  files        - List uploaded files',
       '  metadata     - Display extracted metadata',
+67d4z8-codex/review-and-build-application
       '  MAZLAB       - Administrative dashboard',
       '  anatomy      - Rotating anatomy demo',
       '  viewer       - STL model viewer',
+      '  admin        - Administrative dashboard',
+main
       '  clear        - Clear terminal output',
       '  exit         - Terminate session',
       ''
@@ -446,6 +455,7 @@ const App = () => {
       return lines
     },
 
+67d4z8-codex/review-and-build-application
     anatomy: () => openAnatomy(),
 
     viewer: () => openModelViewer(),
@@ -453,6 +463,10 @@ const App = () => {
     mazlab: () => {
       setAwaitingAdminPassword(true)
       return ['Admin access requires password:', 'Enter password:']
+    admin: () => {
+      openAdmin()
+      return []
+main
     },
 
     clear: () => {
@@ -688,6 +702,7 @@ const App = () => {
     setOutput(prev => [...prev, { type: 'success', content: 'Opening admin dashboard...' }])
   }
 
+67d4z8-codex/review-and-build-application
   const openAnatomy = () => {
     setShowAnatomyDemo(true)
     setOutput(prev => [...prev, { type: 'success', content: 'Launching anatomy demo...' }])
@@ -698,6 +713,7 @@ const App = () => {
     setOutput(prev => [...prev, { type: 'success', content: 'Opening model viewer...' }])
   }
 
+main
   const handleLeadSubmit = (formData) => {
     setOutput(prev => [...prev, 
       { type: 'success', content: `Enterprise inquiry received from ${formData.company}` },
@@ -785,6 +801,7 @@ const App = () => {
           status={systemStatus}
         />
       )}
+67d4z8-codex/review-and-build-application
 
       {showAnatomyDemo && (
         <AnatomyDemo onClose={() => setShowAnatomyDemo(false)} />
@@ -793,6 +810,7 @@ const App = () => {
       {showModelViewer && (
         <ModelViewer onClose={() => setShowModelViewer(false)} />
       )}
+main
     </div>
   )
 }
