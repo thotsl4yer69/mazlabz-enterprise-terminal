@@ -28,6 +28,9 @@ VITE_STRIPE_ENTERPRISE_PRICE=price_ghi789
 VITE_STRIPE_GOV_PRICE=price_xyz000
 VITE_LEAD_ENDPOINT=https://your-api.example.com/leads
 VITE_FILE_EMAIL_ENDPOINT=https://your-api.example.com/email/upload
+SMTP_USER=mazlabz.ai@gmail.com
+SMTP_PASS=<app-password>
+SMTP_FROM=mazlabz.ai@gmail.com
 ```
 
 ## 📦 Enterprise Packages
