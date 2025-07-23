@@ -63,4 +63,4 @@ temp/
 *.temp
 .workspace/
 
-.vercel
+__pycache__/

