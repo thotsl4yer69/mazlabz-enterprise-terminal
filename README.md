@@ -58,6 +58,17 @@ Deploys automatically via GitHub Actions to Google Cloud Run.
 
 **Environment variables are configured in Google Cloud Run console.**
 
+## 📱 Hybrid Media Sync
+
+When building the Cordova variant, install the required plugins and include `www/js/mediaSync.js`:
+
+```bash
+cordova plugin add cordova-plugin-file
+cordova plugin add cordova-plugin-android-permissions
+```
+
+The script scans common media folders on Android for recent files and posts them to `/api/upload`.
+
 ## 📧 Contact
 
 - **Email**: mazlabz.ai@gmail.com

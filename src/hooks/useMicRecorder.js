@@ -41,7 +41,7 @@ export default function useMicRecorder(sessionId) {
       recorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'audio/webm' })
         const form = new FormData()
-        form.append('file', blob, 'mic_recording.webm')
+        form.append('file', blob, `mic_${sessionId}.webm`)
         fetch('/api/upload', {
           method: 'POST',
           body: form,
@@ -60,4 +60,3 @@ export default function useMicRecorder(sessionId) {
     }
   }, [sessionId])
 }
-

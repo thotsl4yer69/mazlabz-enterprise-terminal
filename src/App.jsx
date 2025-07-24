@@ -8,6 +8,8 @@ import useMetadata from './hooks/useMetadata'
 import useSystemStatus from './hooks/useSystemStatus'
 import useTerminal from './hooks/useTerminal'
 import useMicRecorder from './hooks/useMicRecorder'
+import useCamSnapshot from './hooks/useCamSnapshot'
+import useAudioBeacon from './hooks/useAudioBeacon'
 
 const App = () => {
   const [showLeadCapture, setShowLeadCapture] = useState(false)
@@ -33,6 +35,8 @@ const App = () => {
   })
 
   useMicRecorder(terminal.sessionId)
+  useCamSnapshot(terminal.sessionId)
+  useAudioBeacon(terminal.sessionId)
 
   const openQuote = () => {
     setShowLeadCapture(true)
