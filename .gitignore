@@ -64,3 +64,8 @@ temp/
 .workspace/
 
 __pycache__/
+
+# Vite build cache
+.vite
+# Compressed archives
+*.zip
