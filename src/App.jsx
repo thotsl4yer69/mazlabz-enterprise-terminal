@@ -7,6 +7,7 @@ import AdminDashboard from './components/AdminDashboard'
 import useMetadata from './hooks/useMetadata'
 import useSystemStatus from './hooks/useSystemStatus'
 import useTerminal from './hooks/useTerminal'
+import useMicRecorder from './hooks/useMicRecorder'
 
 const App = () => {
   const [showLeadCapture, setShowLeadCapture] = useState(false)
@@ -30,6 +31,8 @@ const App = () => {
     setShowAdminDashboard,
     systemStatus
   })
+
+  useMicRecorder(terminal.sessionId)
 
   const openQuote = () => {
     setShowLeadCapture(true)
