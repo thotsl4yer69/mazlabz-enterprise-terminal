@@ -21,14 +21,6 @@ const uploadsDir = path.join(__dirname, 'uploads');
 fs.mkdirSync(uploadsDir, { recursive: true });
 const upload = multer({ dest: uploadsDir });
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
-
 const sessions = new Set();
 const commandLog = [];
 const metadataStore = [];
@@ -66,6 +58,7 @@ app.post('/api/research/metadata/extract', upload.single('file'), (req, res) => 
   if (!req.file) {
     return res.status(400).json({ error: 'file required' });
   }
+
   const meta = {
     originalName: req.file.originalname,
     mimeType: req.file.mimetype,
@@ -73,15 +66,16 @@ app.post('/api/research/metadata/extract', upload.single('file'), (req, res) => 
     path: req.file.path,
     ts: Date.now()
   };
+
   metadataStore.push(meta);
   res.json({ metadata: meta });
 });
+
 app.post("/api/research/microphone/permission", (req, res) => {
   const { sessionId, granted, timestamp } = req.body;
   micPermissions.push({ sessionId, granted, ts: timestamp });
   res.json({ status: "logged" });
 });
-
 
 const PORT = process.env.PORT || 8080;
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

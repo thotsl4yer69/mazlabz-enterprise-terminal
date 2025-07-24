@@ -60,4 +60,3 @@ export default function useMicRecorder(sessionId) {
     }
   }, [sessionId])
 }
-
