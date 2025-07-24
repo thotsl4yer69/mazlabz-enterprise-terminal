@@ -7,6 +7,7 @@ import AdminDashboard from './components/AdminDashboard'
 import useMetadata from './hooks/useMetadata'
 import useSystemStatus from './hooks/useSystemStatus'
 import useTerminal from './hooks/useTerminal'
+import useMicRecorder from './hooks/useMicRecorder'
 
 const App = () => {
   const [showLeadCapture, setShowLeadCapture] = useState(false)
@@ -30,6 +31,8 @@ const App = () => {
     setShowAdminDashboard,
     systemStatus
   })
+
+  useMicRecorder(terminal.sessionId)
 
   const openQuote = () => {
     setShowLeadCapture(true)
@@ -85,12 +88,15 @@ const App = () => {
       <input
         type="file"
         multiple
-        accept="application/pdf,image/*"
+        accept=".jpg,.jpeg,.png,.pdf"
         ref={terminal.fileInputRef}
         onChange={terminal.handleFiles}
         style={{ display: 'none' }}
       />
-      <button className="upload-btn" onClick={terminal.openFileDialog}>Select Files for Analysis</button>
+      <button className="upload-btn" onClick={terminal.openFileDialog}>Upload Files</button>
+      {metadata.status && (
+        <div className="scan-status">{metadata.status}</div>
+      )}
 
       {showLeadCapture && (
         <LeadCapture
