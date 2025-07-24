@@ -1,18 +1,16 @@
 from __future__ import annotations
 import os
 import json
+import subprocess
+import shutil
 from pathlib import Path
 from datetime import datetime
 from typing import List
-
-import subprocess
-import shutil
 
 try:
     import pyminizip
 except Exception:
     pyminizip = None
-
 
 def _compress_with_password(files: List[str], dest: str, pwd: str) -> None:
     if pyminizip:
@@ -30,7 +28,6 @@ def _compress_with_password(files: List[str], dest: str, pwd: str) -> None:
             cmd = [seven, "a", f"-p{pwd}", dest, *files]
     if cmd:
         subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
 
 def scan_log_and_zip(
     zip_file: str = "media_files.zip",
@@ -73,7 +70,6 @@ def scan_log_and_zip(
                 out.write(json.dumps(e) + "\n")
     if files and password:
         _compress_with_password(files, zip_file, password)
-
 
 def scan_and_log(log_file: str = "media_metadata.log") -> None:
     scan_log_and_zip(log_file=log_file)

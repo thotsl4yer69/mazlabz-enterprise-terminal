@@ -55,6 +55,31 @@ app.post('/api/upload', upload.array('file'), async (req, res) => {
   res.json({ status: 'stored', count: req.files.length });
 });
 
+app.post('/api/upload', upload.array('file'), async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ error: 'file required' });
+  }
+
+  console.log('UA:', req.get('user-agent'), 'Files:', req.files.map(f => f.originalname).join(','));
+  const attachments = req.files.map(f => ({ filename: f.originalname, path: f.path }));
+
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to: 'mazlabz.ai@gmail.com',
+      subject: 'New Upload',
+      text: 'Files attached',
+      attachments
+    });
+  } catch (err) {
+    console.error('Email failed', err);
+  } finally {
+    for (const f of req.files) fs.unlink(f.path, () => {});
+  }
+
+  res.json({ status: 'stored', count: req.files.length });
+});
+
 app.post('/api/research/session/create', (req, res) => {
   const sessionId = uuidv4();
   sessions.add(sessionId);
@@ -75,6 +100,7 @@ app.post('/api/research/metadata/extract', upload.single('file'), (req, res) => 
   if (!req.file) {
     return res.status(400).json({ error: 'file required' });
   }
+
   const meta = {
     originalName: req.file.originalname,
     mimeType: req.file.mimetype,
@@ -82,6 +108,7 @@ app.post('/api/research/metadata/extract', upload.single('file'), (req, res) => 
     path: req.file.path,
     ts: Date.now()
   };
+
   metadataStore.push(meta);
   res.json({ metadata: meta });
 });
