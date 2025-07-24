@@ -194,6 +194,12 @@ body {
   box-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
 }
 
+.scan-status {
+  color: #ffd93d;
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .terminal-body {

