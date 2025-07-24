@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 const storage = new Storage({
   keyFilename: '/mnt/data/earnest-dogfish-465606-t5-59a06feaf075.json',
 });
-const bucketName = 'mazlabz-sandbox-7431';
+const bucketName = 'mazlabz-terminal-store';
 
 export async function uploadToGCS(file, folder = 'session-uploads') {
   const destPath = `${folder}/${file.originalname}`;

