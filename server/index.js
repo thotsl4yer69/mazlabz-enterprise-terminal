@@ -15,7 +15,11 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// serve Vite build output
+app.use(express.static(path.join(__dirname, '..', 'dist')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+});
 
 const uploadsDir = path.join(__dirname, 'uploads');
 fs.mkdirSync(uploadsDir, { recursive: true });
