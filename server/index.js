@@ -7,6 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { uploadToGCS } from './uploadToGCS.js';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -80,6 +81,12 @@ app.post("/api/research/microphone/permission", (req, res) => {
   const { sessionId, granted, timestamp } = req.body;
   micPermissions.push({ sessionId, granted, ts: timestamp });
   res.json({ status: "logged" });
+});
+
+app.get('/api/system/status', (req, res) => {
+  const cpu = os.loadavg()[0] ? Math.min(100, Math.round((os.loadavg()[0] / os.cpus().length) * 100)) : 0;
+  const memory = Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100);
+  res.json({ cpu, memory, uptime: os.uptime() });
 });
 
 const PORT = process.env.PORT || 8080;

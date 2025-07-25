@@ -12,6 +12,7 @@ const AdminDashboard = ({ onClose, files, metadata, status }) => (
       <ul>
         <li>CPU: {status.cpu}%</li>
         <li>Memory: {status.memory}%</li>
+        <li>Uptime: {Math.floor(status.uptime / 60)}m</li>
         <li>Uploaded Files: {status.files}</li>
       </ul>
       <h3>Uploaded Files</h3>
