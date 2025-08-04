@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Version 4 - Blog Layout</title>
+<style>
+body{font-family:Georgia,serif;margin:0;background:#fafafa;color:#333;}
+header{background:#333;color:#fff;padding:40px;text-align:center;}
+article{max-width:800px;margin:40px auto;background:#fff;padding:20px;box-shadow:0 0 5px rgba(0,0,0,.1);}
+article h2{margin-top:0;}
+#comment{margin-top:20px;}
+#comment textarea{width:100%;height:80px;}
+</style>
+</head>
+<body>
+<header><h1>MAZLABZ Insights</h1></header>
+<article>
+<h2>AI in the Enterprise</h2>
+<p>Automation and intelligent systems are redefining operations across industries. MAZLABZ deploys scalable architectures that deliver measurable ROI.</p>
+<section id="comment">
+<h3>Leave a Comment</h3>
+<textarea id="cmt"></textarea><br>
+<button onclick="saveComment()">Post</button>
+<p id="cmt-msg"></p>
+</section>
+</article>
+<script>
+function saveComment(){
+ const text=document.getElementById('cmt').value.trim();
+ if(text){document.getElementById('cmt-msg').textContent='Thanks for your comment!';document.getElementById('cmt').value='';}
+}
+</script>
+</body>
+</html>
