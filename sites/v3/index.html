@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Version 3 - Terminal Interface</title>
+<style>
+body{background:#000;color:#0f0;font-family:monospace;padding:20px;}
+#terminal{max-width:800px;margin:auto;}
+input{background:transparent;border:none;color:#0f0;font-family:monospace;width:100%;outline:none;}
+</style>
+</head>
+<body>
+<div id="terminal"></div>
+<form id="cmd-form"><span>$ </span><input id="cmd" autofocus></form>
+<script>
+const term=document.getElementById('terminal');
+const form=document.getElementById('cmd-form');
+form.addEventListener('submit',e=>{
+ e.preventDefault();
+ const cmd=document.getElementById('cmd').value.trim();
+ const line=document.createElement('div');
+ line.textContent='$ '+cmd;term.appendChild(line);
+ handle(cmd);
+ document.getElementById('cmd').value='';
+});
+function handle(cmd){
+ let out='Command not recognized';
+ if(cmd==='help') out='Available: help, contact';
+ if(cmd==='contact') out='Email: mazlabz.ai@gmail.com';
+ const line=document.createElement('div');
+ line.textContent=out;term.appendChild(line);term.scrollTop=term.scrollHeight;
+}
+</script>
+</body>
+</html>
