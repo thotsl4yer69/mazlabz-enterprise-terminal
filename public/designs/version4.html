@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Design Version 4</title>
+  <style>
+    body{font-family:Helvetica, sans-serif;margin:0;display:flex;justify-content:center;align-items:center;height:100vh;background:#e0e0ff;}
+    button{padding:15px 25px;font-size:16px;border:none;border-radius:5px;background:#5a67d8;color:#fff;cursor:pointer;}
+    #modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;}
+    #modalContent{background:#fff;padding:20px;border-radius:8px;text-align:center;}
+  </style>
+</head>
+<body>
+  <button id="open">Open Modal</button>
+  <div id="modal">
+    <div id="modalContent">
+      <p>This is a simple modal.</p>
+      <button id="close">Close</button>
+    </div>
+  </div>
+  <script>
+    const open=document.getElementById('open');
+    const close=document.getElementById('close');
+    const modal=document.getElementById('modal');
+    open.addEventListener('click',()=>modal.style.display='flex');
+    close.addEventListener('click',()=>modal.style.display='none');
+  </script>
+</body>
+</html>
