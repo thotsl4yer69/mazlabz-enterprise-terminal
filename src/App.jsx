@@ -426,65 +426,6 @@ const App = () => {
         ''
       ]
     },
-    clear: () => {
-      setOutput([])
-      return []
-    },
-    exit: () => [
-      'Terminating enterprise session...',
-      'Thank you for accessing MAZLABZ Enterprise Systems',
-      'Connection secured and logged.',
-      ''
-    ]
-  }
-
-  // Effect to run boot sequence
-  useEffect(() => {
-    let timeouts = []
-    bootSequence.forEach((line, index) => {
-      const timeout = setTimeout(() => {
-        setOutput(prev => [...prev, { type: 'boot', content: line }])
-        if (index === bootSequence.length - 1) {
-          setTimeout(() => setIsBooted(true), 500)
-        }
-      }, index * 100)
-      timeouts.push(timeout)
-    })
-    return () => timeouts.forEach(clearTimeout)
-  }, [])
-
-  // Auto-focus input when booted
-  useEffect(() => {
-    if (isBooted && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [isBooted])
-
-  // Scroll to bottom when output changes
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight
-    }
-  }, [output])
-
-  // Listen for lead capture events (unused but kept for parity)
-  useEffect(() => {
-    const handleOpenLeadCapture = () => setShowLeadCapture(true)
-    window.addEventListener('openLeadCapture', handleOpenLeadCapture)
-    return () => window.removeEventListener('openLeadCapture', handleOpenLeadCapture)
-  }, [])
-
-    health: async () => {
-      const data = await checkHealth()
-      return [
-        'API HEALTH STATUS',
-        '════════════════',
-        '',
-        `Server: ${data.status}`,
-        `Database: ${data.database}`,
-        ''
-      ]
-    },
     admin: async (args) => {
       const subCommand = args[0]
       if (!subCommand) {
@@ -536,7 +477,6 @@ const App = () => {
     ]
   }
 
-  // Effect to run boot sequence
   useEffect(() => {
     let timeouts = []
     bootSequence.forEach((line, index) => {
@@ -551,21 +491,18 @@ const App = () => {
     return () => timeouts.forEach(clearTimeout)
   }, [])
 
-  // Auto-focus input when booted
   useEffect(() => {
     if (isBooted && inputRef.current) {
       inputRef.current.focus()
     }
   }, [isBooted])
 
-  // Scroll to bottom when output changes
   useEffect(() => {
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight
     }
   }, [output])
 
-  // Listen for lead capture events (unused but kept for parity)
   useEffect(() => {
     const handleOpenLeadCapture = () => setShowLeadCapture(true)
     window.addEventListener('openLeadCapture', handleOpenLeadCapture)
@@ -573,19 +510,21 @@ const App = () => {
   }, [])
 
   const handleCommand = async (cmd) => {
-    const [command, ...args] = cmd.trim().toLowerCase().split(/\s+/)
+    const trimmedCmd = cmd.trim()
+    const [command, ...args] = trimmedCmd.toLowerCase().split(/\s+/)
+
     setCommandHistory(prev => [...prev, cmd])
     setHistoryIndex(-1)
     setOutput(prev => [...prev, { type: 'command', content: `mazlabz@enterprise:~$ ${cmd}` }])
 
-    // Specific command handling before generic lookup
+    // Handle commands with arguments
     if (command === 'download') {
       const id = args[0]
       if (id) {
         window.open(`${API_BASE}/api/files/${id}`, '_blank')
         setOutput(prev => [...prev, { type: 'success', content: `Downloading ${id}...` }])
       } else {
-        setOutput(prev => [...prev, { type: 'error', content: `Usage: download <id>` }])
+        setOutput(prev => [...prev, { type: 'error', content: 'Usage: download <id>' }])
       }
       setCurrentLine('')
       return
@@ -605,7 +544,7 @@ const App = () => {
           setOutput(prev => [...prev, { type: 'error', content: `Delete failed: ${e.message}` }])
         }
       } else {
-        setOutput(prev => [...prev, { type: 'error', content: `Usage: delete <id>` }])
+         setOutput(prev => [...prev, { type: 'error', content: 'Usage: delete <id>' }])
       }
       setCurrentLine('')
       return
@@ -613,17 +552,8 @@ const App = () => {
 
     // Execute command if defined
     if (commands[command]) {
-      const result = commands[command](args)
-      if (result instanceof Promise) {
-        try {
-          const lines = await result
-          lines.forEach(line => {
-            setOutput(prev => [...prev, { type: 'output', content: line }])
-          })
-        } catch (err) {
-          setOutput(prev => [...prev, { type: 'error', content: `Error: ${err.message}` }])
-        }
-      } else if (Array.isArray(result)) {
+      const result = await commands[command](args) // All commands can be async now
+      if (Array.isArray(result)) {
         result.forEach(line => {
           setOutput(prev => [...prev, { type: 'output', content: line }])
         })

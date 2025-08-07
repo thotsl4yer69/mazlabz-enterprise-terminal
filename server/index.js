@@ -22,7 +22,7 @@ fs.mkdirSync(uploadsDir, { recursive: true });
 const upload = multer({ dest: uploadsDir });
 
 // Connect to the database on startup
-connect().then(() => {
+db.connect().then(() => {
     console.log('Database connected successfully.');
 }).catch(err => {
     console.error('Failed to connect to the database:', err);

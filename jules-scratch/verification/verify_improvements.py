@@ -7,8 +7,12 @@ def run_verification(playwright):
     page = context.new_page()
 
     try:
+        print("Waiting for 5 seconds before navigating...")
+        page.wait_for_timeout(5000)
+        print("Navigating to http://localhost:3000...")
         # Navigate to the app
-        page.goto("http://localhost:5173")
+        page.goto("http://localhost:3000")
+        print("Navigation complete.")
 
         # Wait for boot sequence to complete by waiting for the input to be visible
         input_locator = page.locator('input.terminal-input')
@@ -25,20 +29,22 @@ def run_verification(playwright):
         # 2. Open lead capture form
         input_locator.fill("quote")
         input_locator.press("Enter")
+        page.wait_for_timeout(1000)
+        page.screenshot(path="jules-scratch/verification/debug.png")
 
         # Wait for form to appear and fill it out
-        form_locator = page.locator('.lead-capture-modal')
+        form_locator = page.locator('.lead-capture-modal form')
         expect(form_locator).to_be_visible()
 
-        page.get_by_label("Executive Name *").fill("Test User")
-        page.get_by_label("Enterprise Email *").fill("test@example.com")
-        page.get_by_label("Company Name *").fill("TestCorp")
-        page.get_by_label("Enterprise Project Type *").select_option("ai-automation")
-        page.get_by_label("Investment Budget *").select_option("75k-150k")
-        page.get_by_label("Implementation Timeline *").select_option("90-days")
+        form_locator.get_by_placeholder("Chief Technology Officer").fill("Test User")
+        form_locator.get_by_placeholder("cto@fortune500.com").fill("test@example.com")
+        form_locator.get_by_placeholder("Fortune 500 Corporation").fill("TestCorp")
+        form_locator.locator('div.form-group:has-text("Enterprise Project Type *") > select').select_option("ai-automation")
+        form_locator.locator('div.form-group:has-text("Investment Budget *") > select').select_option("75k-150k")
+        form_locator.locator('div.form-group:has-text("Implementation Timeline *") > select').select_option("90-days")
 
         # 3. Submit the form
-        page.get_by_role("button", name="REQUEST ENTERPRISE CONSULTATION").click()
+        form_locator.get_by_role("button", name="REQUEST ENTERPRISE CONSULTATION").click()
 
         # Wait for the success message in the terminal
         expect(help_output).to_contain_text("Enterprise inquiry received from TestCorp")
