@@ -1,7 +1,7 @@
 // Updated DocumentUploader that uploads files to the FastAPI backend.
 import React, { useState, useRef } from 'react'
 
-const DocumentUploader = ({ onClose, onUpload }) => {
+const DocumentUploader = ({ onClose, onUpload, sessionId }) => {
   const [uploadStep, setUploadStep] = useState('selection') // selection, uploading, success
   const [selectedFiles, setSelectedFiles] = useState([])
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -55,8 +55,11 @@ const DocumentUploader = ({ onClose, onUpload }) => {
 
     // Build FormData for actual upload
     const formData = new FormData()
-    files.forEach(file => formData.append('files', file))
-    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8001'
+    files.forEach(file => formData.append('file', file)) // Backend expects 'file' not 'files'
+    if (sessionId) {
+      formData.append('sessionId', sessionId)
+    }
+    const API_BASE = import.meta.env.VITE_API_BASE || ''
     try {
       const res = await fetch(`${API_BASE}/api/upload`, {
         method: 'POST',
