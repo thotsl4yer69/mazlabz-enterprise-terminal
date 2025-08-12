@@ -1,9 +1,7 @@
 import { Storage } from '@google-cloud/storage';
 import fs from 'fs/promises';
 
-const storage = new Storage({
-  keyFilename: '/mnt/data/earnest-dogfish-465606-t5-59a06feaf075.json',
-});
+const storage = new Storage();
 const bucketName = 'mazlabz-terminal-store';
 
 export async function uploadToGCS(file, folder = 'session-uploads') {
