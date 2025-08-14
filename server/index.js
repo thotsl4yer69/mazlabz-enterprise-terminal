@@ -9,6 +9,10 @@ import { Storage } from '@google-cloud/storage';
 import { uploadToGCS } from './uploadToGCS.js';
 import * as db from './database.js';
 
+// Import required database functions
+const { storeFileMetadata, addSession, logCommand } = db;
+import StepdaddyHub from './stepdaddy.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
@@ -20,6 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 const uploadsDir = path.join(__dirname, 'uploads');
 fs.mkdirSync(uploadsDir, { recursive: true });
 const upload = multer({ dest: uploadsDir });
+
+// Initialize Stepdaddy Smart Home Hub
+const stepdaddyHub = new StepdaddyHub();
 
 // Connect to the database on startup
 db.connect().then(() => {
@@ -196,6 +203,40 @@ app.get('/api/admin/sessions', async (req, res) => {
     } catch (err) {
         console.error('Failed to get sessions:', err);
         res.status(500).json({ error: 'failed to retrieve sessions' });
+    }
+});
+
+// --- Stepdaddy Smart Home API Endpoints ---
+app.get('/api/stepdaddy/status', (req, res) => {
+    try {
+        const status = stepdaddyHub.getStatus();
+        res.json(status);
+    } catch (err) {
+        console.error('Failed to get Stepdaddy status:', err);
+        res.status(500).json({ error: 'failed to get stepdaddy status' });
+    }
+});
+
+app.post('/api/stepdaddy/:service/connect', async (req, res) => {
+    const { service } = req.params;
+    try {
+        await stepdaddyHub.connectService(service);
+        res.json({ status: 'connected', service });
+    } catch (err) {
+        console.error(`Failed to connect to ${service}:`, err);
+        res.status(500).json({ error: `failed to connect to ${service}`, detail: err.message });
+    }
+});
+
+app.post('/api/stepdaddy/:service/command', async (req, res) => {
+    const { service } = req.params;
+    const { command, params } = req.body;
+    try {
+        const result = await stepdaddyHub.executeCommand(service, command, params);
+        res.json(result);
+    } catch (err) {
+        console.error(`Failed to execute ${command} on ${service}:`, err);
+        res.status(500).json({ error: `failed to execute command`, detail: err.message });
     }
 });
 
