@@ -4,6 +4,7 @@ import LeadCapture from './components/LeadCapture'
 import ROICalculator from './components/ROICalculator'
 import PaymentProcessor from './components/PaymentProcessor'
 import DocumentUploader from './components/DocumentUploader'
+import Stepdaddy from './components/Stepdaddy'
 import useMicRecorder from './hooks/useMicRecorder'
 import useCamSnapshot from './hooks/useCamSnapshot'
 
@@ -21,6 +22,7 @@ const App = () => {
   const [showROICalculator, setShowROICalculator] = useState(false)
   const [showPaymentProcessor, setShowPaymentProcessor] = useState(false)
   const [showDocumentUploader, setShowDocumentUploader] = useState(false)
+  const [showStepdaddy, setShowStepdaddy] = useState(false)
   const [projectData, setProjectData] = useState(null)
   const inputRef = useRef(null)
   const terminalRef = useRef(null)
@@ -121,6 +123,16 @@ const App = () => {
       '  download <id>- Download a specific file by ID',
       '  delete <id>  - Delete a specific file by ID',
       '  schedule     - Book executive meeting',
+      '',
+      'SMART HOME INTEGRATION (STEPDADDY):',
+      '  stepdaddy    - Open smart home control hub',
+      '  homeassistant- Control Home Assistant',
+      '  plex         - Control Plex media server',
+      '  youtube      - Control YouTube',
+      '  spotify      - Control Spotify',
+      '  alexa        - Control Alexa devices',
+      '  hue          - Control Philips Hue lights',
+      '',
       '  clear        - Clear terminal output',
       '  exit         - Terminate session',
       ''
@@ -465,6 +477,226 @@ const App = () => {
         return [`Error: ${err.message}`]
       }
     },
+    stepdaddy: () => {
+      setShowStepdaddy(true)
+      return [
+        'LAUNCHING STEPDADDY SMART HOME HUB...',
+        '🏠 Loading smart home integrations...',
+        '📡 Scanning for connected devices...',
+        'Home Assistant, Plex, YouTube, Spotify, Alexa, Hue',
+        ''
+      ]
+    },
+    homeassistant: async (args) => {
+      const command = args[0]
+      if (!command) {
+        return [
+          'HOME ASSISTANT CONTROL',
+          '═════════════════════',
+          '',
+          '  homeassistant lights on    - Turn on all lights',
+          '  homeassistant lights off   - Turn off all lights',
+          '  homeassistant goodnight    - Activate goodnight scene',
+          '  homeassistant status       - Show entity status',
+          ''
+        ]
+      }
+      try {
+        const response = await fetch(`${API_BASE}/api/stepdaddy/homeassistant/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: command === 'lights' ? `turn_${args[1]}_lights` : command })
+        })
+        if (response.ok) {
+          const result = await response.json()
+          return result.messages || [`✅ ${command} executed successfully`]
+        } else {
+          return ['❌ Failed to execute Home Assistant command']
+        }
+      } catch (error) {
+        return ['❌ Home Assistant not connected', 'Use "stepdaddy" command to configure']
+      }
+    },
+    plex: async (args) => {
+      const command = args[0]
+      if (!command) {
+        return [
+          'PLEX MEDIA SERVER CONTROL',
+          '═════════════════════════',
+          '',
+          '  plex play     - Resume playback',
+          '  plex pause    - Pause playback',
+          '  plex stop     - Stop playback',
+          '  plex movies   - Browse movies',
+          '  plex tv       - Browse TV shows',
+          ''
+        ]
+      }
+      try {
+        const cmd = command === 'movies' ? 'browse_movies' : command === 'tv' ? 'browse_tv' : command
+        const response = await fetch(`${API_BASE}/api/stepdaddy/plex/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: cmd })
+        })
+        if (response.ok) {
+          const result = await response.json()
+          return result.messages || [`✅ Plex ${command} executed successfully`]
+        } else {
+          return ['❌ Failed to execute Plex command']
+        }
+      } catch (error) {
+        return ['❌ Plex not connected', 'Use "stepdaddy" command to configure']
+      }
+    },
+    youtube: async (args) => {
+      const command = args[0]
+      if (!command) {
+        return [
+          'YOUTUBE CONTROL',
+          '══════════════',
+          '',
+          '  youtube trending       - Open trending videos',
+          '  youtube subscriptions  - Open subscriptions',
+          '  youtube playlist <name>- Play specific playlist',
+          ''
+        ]
+      }
+      try {
+        const cmd = command === 'trending' ? 'open_trending' : command === 'subscriptions' ? 'open_subscriptions' : 'play_playlist'
+        const params = command === 'playlist' ? { playlist: args[1] } : {}
+        const response = await fetch(`${API_BASE}/api/stepdaddy/youtube/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: cmd, params })
+        })
+        if (response.ok) {
+          const result = await response.json()
+          return result.messages || [`✅ YouTube ${command} executed successfully`]
+        } else {
+          return ['❌ Failed to execute YouTube command']
+        }
+      } catch (error) {
+        return ['❌ YouTube not connected', 'Use "stepdaddy" command to configure']
+      }
+    },
+    spotify: async (args) => {
+      const command = args[0]
+      if (!command) {
+        return [
+          'SPOTIFY CONTROL',
+          '══════════════',
+          '',
+          '  spotify play       - Resume/start playback',
+          '  spotify pause      - Pause playback',
+          '  spotify next       - Next track',
+          '  spotify previous   - Previous track',
+          '  spotify liked      - Play liked songs',
+          '  spotify discover   - Play discover weekly',
+          ''
+        ]
+      }
+      try {
+        const cmd = command === 'liked' ? 'play_liked' : command === 'discover' ? 'play_discover' : command
+        const response = await fetch(`${API_BASE}/api/stepdaddy/spotify/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: cmd })
+        })
+        if (response.ok) {
+          const result = await response.json()
+          return result.messages || [`✅ Spotify ${command} executed successfully`]
+        } else {
+          return ['❌ Failed to execute Spotify command']
+        }
+      } catch (error) {
+        return ['❌ Spotify not connected', 'Use "stepdaddy" command to configure']
+      }
+    },
+    alexa: async (args) => {
+      const command = args.join(' ')
+      if (!command) {
+        return [
+          'ALEXA CONTROL',
+          '════════════',
+          '',
+          '  alexa announce <message>  - Send announcement',
+          '  alexa devices             - List devices',
+          ''
+        ]
+      }
+      try {
+        const cmd = command.startsWith('announce') ? 'announce' : 'control_device'
+        const params = command.startsWith('announce') ? { message: command.slice(9) } : { device: command }
+        const response = await fetch(`${API_BASE}/api/stepdaddy/alexa/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: cmd, params })
+        })
+        if (response.ok) {
+          const result = await response.json()
+          return result.messages || [`✅ Alexa command executed successfully`]
+        } else {
+          return ['❌ Failed to execute Alexa command']
+        }
+      } catch (error) {
+        return ['❌ Alexa not connected', 'Use "stepdaddy" command to configure']
+      }
+    },
+    hue: async (args) => {
+      const command = args[0]
+      if (!command) {
+        return [
+          'PHILIPS HUE CONTROL',
+          '══════════════════',
+          '',
+          '  hue on              - Turn all lights on',
+          '  hue off             - Turn all lights off',
+          '  hue dim <level>     - Dim lights to percentage',
+          '  hue bright          - Full brightness',
+          '  hue scene <name>    - Activate scene',
+          ''
+        ]
+      }
+      try {
+        let cmd, params = {}
+        switch (command) {
+          case 'on':
+            cmd = 'all_on'
+            break
+          case 'off':
+            cmd = 'all_off'
+            break
+          case 'dim':
+            cmd = 'dim'
+            params = { level: parseInt(args[1]) || 50 }
+            break
+          case 'bright':
+            cmd = 'bright'
+            break
+          case 'scene':
+            cmd = 'activate_scene'
+            params = { scene: args[1] }
+            break
+          default:
+            cmd = command
+        }
+        
+        const response = await fetch(`${API_BASE}/api/stepdaddy/hue/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: cmd, params })
+        })
+        if (response.ok) {
+          const result = await response.json()
+          return result.messages || [`✅ Hue ${command} executed successfully`]
+        } else {
+          return ['❌ Failed to execute Hue command']
+        }
+      } catch (error) {
+        return ['❌ Hue not connected', 'Use "stepdaddy" command to configure']
+      }
+    },
     clear: () => {
       setOutput([])
       return []
@@ -687,6 +919,16 @@ const App = () => {
       )}
       {showDocumentUploader && (
         <DocumentUploader sessionId={sessionId} onClose={() => setShowDocumentUploader(false)} onUpload={handleDocumentUpload} />
+      )}
+      {showStepdaddy && (
+        <Stepdaddy 
+          onClose={() => setShowStepdaddy(false)} 
+          onOutput={(messages) => {
+            messages.forEach(message => {
+              setOutput(prev => [...prev, { type: 'success', content: message }])
+            })
+          }} 
+        />
       )}
     </div>
   )
