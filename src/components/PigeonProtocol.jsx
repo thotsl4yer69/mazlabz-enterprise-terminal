@@ -26,7 +26,6 @@ const PigeonProtocol = ({ onClose, sessionId }) => {
         setStatus(data.error || 'failed')
       }
     } catch (err) {
-      console.error('Failed to send pigeon message:', err)
       setStatus('failed')
     }
   }
