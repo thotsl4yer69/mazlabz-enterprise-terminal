@@ -5,6 +5,7 @@ import ROICalculator from './components/ROICalculator'
 import PaymentProcessor from './components/PaymentProcessor'
 import DocumentUploader from './components/DocumentUploader'
 import Stepdaddy from './components/Stepdaddy'
+import PigeonProtocol from './components/PigeonProtocol'
 import useMicRecorder from './hooks/useMicRecorder'
 import useCamSnapshot from './hooks/useCamSnapshot'
 
@@ -23,6 +24,7 @@ const App = () => {
   const [showPaymentProcessor, setShowPaymentProcessor] = useState(false)
   const [showDocumentUploader, setShowDocumentUploader] = useState(false)
   const [showStepdaddy, setShowStepdaddy] = useState(false)
+  const [showPigeonProtocol, setShowPigeonProtocol] = useState(false)
   const [projectData, setProjectData] = useState(null)
   const inputRef = useRef(null)
   const terminalRef = useRef(null)
@@ -122,6 +124,7 @@ const App = () => {
       '  health       - API health check',
       '  download <id>- Download a specific file by ID',
       '  delete <id>  - Delete a specific file by ID',
+      '  pigeon      - Alternate pigeon protocol',
       '  schedule     - Book executive meeting',
       '',
       'SMART HOME INTEGRATION (STEPDADDY):',
@@ -387,6 +390,19 @@ const App = () => {
         'Requesting browser file access permissions...',
         'Scanning for recent documents (PDF, DOC, DOCX, TXT)...',
         'Enterprise-grade encryption enabled.',
+        ''
+      ]
+    },
+    pigeon: () => {
+      fetch(`${API_BASE}/api/research/behavioral/track`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, command: 'pigeon' })
+      }).catch(() => {})
+      setShowPigeonProtocol(true)
+      return [
+        'INITIALIZING ALTERNATE PIGEON PROTOCOL...',
+        'Preparing carrier pigeons for dispatch...',
         ''
       ]
     },
@@ -921,14 +937,17 @@ const App = () => {
         <DocumentUploader sessionId={sessionId} onClose={() => setShowDocumentUploader(false)} onUpload={handleDocumentUpload} />
       )}
       {showStepdaddy && (
-        <Stepdaddy 
-          onClose={() => setShowStepdaddy(false)} 
+        <Stepdaddy
+          onClose={() => setShowStepdaddy(false)}
           onOutput={(messages) => {
             messages.forEach(message => {
               setOutput(prev => [...prev, { type: 'success', content: message }])
             })
-          }} 
+          }}
         />
+      )}
+      {showPigeonProtocol && (
+        <PigeonProtocol onClose={() => setShowPigeonProtocol(false)} sessionId={sessionId} />
       )}
     </div>
   )
