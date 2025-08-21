@@ -10,7 +10,7 @@ import { uploadToGCS } from './uploadToGCS.js';
 import * as db from './database.js';
 
 // Import required database functions
-const { storeFileMetadata, addSession, logCommand } = db;
+const { storeFileMetadata, addSession, logCommand, addPigeonMessage } = db;
 import StepdaddyHub from './stepdaddy.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -172,6 +172,20 @@ app.post('/api/leads', async (req, res) => {
     } catch (err) {
         console.error('Failed to save lead:', err);
         res.status(500).json({ error: 'failed to save lead' });
+    }
+});
+
+app.post('/api/pigeon/send', async (req, res) => {
+    const { sessionId, recipient, message } = req.body;
+    if (!sessionId || !recipient || !message) {
+        return res.status(400).json({ error: 'sessionId, recipient, and message are required' });
+    }
+    try {
+        await addPigeonMessage({ sessionId, recipient, message });
+        res.json({ status: 'delivered' });
+    } catch (err) {
+        console.error('Failed to store pigeon message:', err);
+        res.status(500).json({ error: 'failed to deliver pigeon message' });
     }
 });
 
