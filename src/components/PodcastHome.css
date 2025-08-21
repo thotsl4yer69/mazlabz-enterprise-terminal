@@ -1,0 +1,26 @@
+.podcast-home {
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.cta {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  color: inherit;
+}
