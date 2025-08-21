@@ -55,6 +55,15 @@ export async function connect() {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (session_id) REFERENCES sessions (id)
     );
+
+    CREATE TABLE IF NOT EXISTS pigeon_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id TEXT,
+        recipient TEXT,
+        message TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (session_id) REFERENCES sessions (id)
+    );
   `);
 
   return db;
@@ -86,6 +95,16 @@ export async function addLead({ sessionId, name, email, company, projectType, bu
         'INSERT INTO leads (session_id, name, email, company, project_type, budget) VALUES (?, ?, ?, ?, ?, ?)',
         sessionId, name, email, company, projectType, budget
     );
+}
+
+export async function addPigeonMessage({ sessionId, recipient, message }) {
+  const db = await connect();
+  await db.run(
+    'INSERT INTO pigeon_messages (session_id, recipient, message) VALUES (?, ?, ?)',
+    sessionId,
+    recipient,
+    message
+  );
 }
 
 
