@@ -4,7 +4,7 @@ Professional terminal interface with real Stripe payment processing for Fortune 
 
 ## 🚀 Live Demo
 - **Production URL**: https://mazlabz-terminal-894383524313.us-central1.run.app/
- - **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `admin`
+ - **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `admin`, `pigeon`
 
 ## 💳 Payment Integration
 
