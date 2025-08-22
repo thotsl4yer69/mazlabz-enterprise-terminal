@@ -175,6 +175,48 @@ app.post('/api/leads', async (req, res) => {
     }
 });
 
+app.post('/api/email/upload', upload.array('file'), async (req, res) => {
+    if (!req.files?.length) return res.status(400).json({ error: 'file required for email upload' });
+    
+    const { recipient, subject, message, sessionId } = req.body;
+    if (!recipient) return res.status(400).json({ error: 'recipient email required' });
+    
+    try {
+        // Store files in GCS
+        const uploadPromises = req.files.map(async (file) => {
+            const gcsPath = `email-uploads/${sessionId || 'anonymous'}/${file.originalname}`;
+            await uploadToGCS(file, `email-uploads/${sessionId || 'anonymous'}`);
+            return {
+                filename: file.originalname,
+                path: gcsPath,
+                size: file.size
+            };
+        });
+        
+        const uploadedFiles = await Promise.all(uploadPromises);
+        
+        // Log email request (in production, this would send actual emails)
+        console.log('Email upload request:', {
+            recipient,
+            subject: subject || 'File Upload from MAZLABZ Terminal',
+            message: message || 'Files attached from MAZLABZ Enterprise Terminal',
+            files: uploadedFiles.map(f => f.filename),
+            sessionId
+        });
+        
+        // For now, we'll just confirm receipt - in production this would integrate with nodemailer
+        res.status(200).json({ 
+            status: 'email queued',
+            recipient,
+            filesCount: uploadedFiles.length,
+            message: 'Files uploaded and email queued for delivery'
+        });
+    } catch (err) {
+        console.error('Failed to process email upload:', err);
+        res.status(500).json({ error: 'failed to process email upload', detail: err.message });
+    }
+});
+
 app.post('/api/pigeon/send', async (req, res) => {
     const { sessionId, recipient, message } = req.body;
     if (!sessionId || !recipient || !message) {

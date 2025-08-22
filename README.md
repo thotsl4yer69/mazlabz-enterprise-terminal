@@ -22,12 +22,12 @@ Required for deployment:
 
 ```env
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51RjF1DQdNvblnpPjsuIGahBdZQWUiJs122VCNPDEPRfxO6COCQyVCCY72NzdpRbUUqPV4yguXoEpHEhIVfMcPkZE00zaNqtefA
-VITE_STRIPE_BASIC_PRICE=price_abc123
-VITE_STRIPE_STANDARD_PRICE=price_def456
-VITE_STRIPE_ENTERPRISE_PRICE=price_ghi789
-VITE_STRIPE_GOV_PRICE=price_xyz000
-VITE_LEAD_ENDPOINT=https://your-api.example.com/leads
-VITE_FILE_EMAIL_ENDPOINT=https://your-api.example.com/email/upload
+VITE_STRIPE_BASIC_PRICE=price_1RjyW4H64eFgP6GinxGYuo7A
+VITE_STRIPE_STANDARD_PRICE=price_1RjyWPH64eFgP6GiYfaIvlHW
+VITE_STRIPE_ENTERPRISE_PRICE=price_1RjyWjH64eFgP6Gi7HKO69xx
+VITE_STRIPE_GOV_PRICE=price_1RjyX6H64eFgP6GiaSHMnEx6
+VITE_LEAD_ENDPOINT=https://mazlabz-terminal-894383524313.us-central1.run.app/api/leads
+VITE_FILE_EMAIL_ENDPOINT=https://mazlabz-terminal-894383524313.us-central1.run.app/api/email/upload
 SMTP_USER=mazlabz.ai@gmail.com
 SMTP_PASS=<app-password>
 SMTP_FROM=mazlabz.ai@gmail.com
