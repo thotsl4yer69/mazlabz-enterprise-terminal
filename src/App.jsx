@@ -25,6 +25,7 @@ const App = () => {
   const [showDocumentUploader, setShowDocumentUploader] = useState(false)
   const [showStepdaddy, setShowStepdaddy] = useState(false)
   const [showPigeonProtocol, setShowPigeonProtocol] = useState(false)
+  const [stepdaddyActiveService, setStepdaddyActiveService] = useState('dashboard')
   const [projectData, setProjectData] = useState(null)
   const inputRef = useRef(null)
   const terminalRef = useRef(null)
@@ -717,6 +718,16 @@ const App = () => {
       setOutput([])
       return []
     },
+    schedule: () => {
+      setStepdaddyActiveService('automation')
+      setShowStepdaddy(true)
+      return [
+        'LAUNCHING SMART HOME SCHEDULER...',
+        '📅 Opening automation and scheduling hub...',
+        'Configure smart home automation rules and schedules',
+        ''
+      ]
+    },
     exit: () => [
       'Terminating enterprise session...',
       'Thank you for accessing MAZLABZ Enterprise Systems',
@@ -939,6 +950,7 @@ const App = () => {
       {showStepdaddy && (
         <Stepdaddy
           onClose={() => setShowStepdaddy(false)}
+          initialActiveService={stepdaddyActiveService}
           onOutput={(messages) => {
             messages.forEach(message => {
               setOutput(prev => [...prev, { type: 'success', content: message }])
