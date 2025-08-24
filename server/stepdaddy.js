@@ -275,10 +275,21 @@ class StepdaddyHub {
     
     switch (command) {
       case 'play':
+        messages.push('🎬 Checking Plex server connectivity...');
+        const plexAvailable = await this.checkServiceAvailability('plex');
         if (service.currentMedia) {
-          messages.push(`▶️ Resuming: ${service.currentMedia}`);
+          if (plexAvailable) {
+            messages.push(`▶️ Resuming: ${service.currentMedia}`);
+          } else {
+            messages.push(`⚠️ Plex server unreachable. Queued: ${service.currentMedia}`);
+            messages.push('💡 Check: Local network, VPN, or Plex server status');
+          }
         } else {
-          messages.push('▶️ No media to resume');
+          if (plexAvailable) {
+            messages.push('▶️ No media to resume');
+          } else {
+            messages.push('⚠️ Cannot reach Plex server - check network connection');
+          }
         }
         break;
       case 'pause':
@@ -289,14 +300,28 @@ class StepdaddyHub {
         }
         break;
       case 'stop':
-        messages.push('⏹️ Stopped playback');
+        messages.push('⏹️ Stopped playbook');
         service.currentMedia = null;
         break;
       case 'browse_movies':
-        messages.push('🎬 Opening Plex Movies library...');
+        messages.push('🎬 Checking Plex Movies library access...');
+        const moviesAvailable = await this.checkServiceAvailability('plex');
+        if (moviesAvailable) {
+          messages.push('🎬 Opening Plex Movies library...');
+        } else {
+          messages.push('⚠️ Cannot access Plex - server may be offline or blocked');
+          messages.push('💡 Try: Check server, VPN, or use Plex mobile app');
+        }
         break;
       case 'browse_tv':
-        messages.push('📺 Opening Plex TV Shows library...');
+        messages.push('📺 Checking Plex TV Shows library access...');
+        const tvAvailable = await this.checkServiceAvailability('plex');
+        if (tvAvailable) {
+          messages.push('📺 Opening Plex TV Shows library...');
+        } else {
+          messages.push('⚠️ Cannot access Plex - server may be offline or blocked');
+          messages.push('💡 Try: Check server, VPN, or use Plex mobile app');
+        }
         break;
       default:
         messages.push(`❓ Unknown Plex command: ${command}`);
@@ -307,16 +332,53 @@ class StepdaddyHub {
 
   async executeYouTubeCommand(command, params) {
     const messages = [];
+    const fallbackUrls = {
+      'open_trending': [
+        'https://www.youtube.com/feed/trending',
+        'https://youtube.com/trending',
+        'https://m.youtube.com/trending',
+        'https://youtube-nocookie.com/trending'
+      ],
+      'open_subscriptions': [
+        'https://www.youtube.com/feed/subscriptions',
+        'https://youtube.com/subscriptions',
+        'https://m.youtube.com/subscriptions'
+      ]
+    };
     
     switch (command) {
       case 'open_trending':
         messages.push('📺 Opening YouTube Trending...');
+        const trendingUrl = await this.findWorkingUrl(fallbackUrls.open_trending);
+        if (trendingUrl) {
+          messages.push(`🌐 Using: ${trendingUrl}`);
+          messages.push('✅ Opening in browser...');
+        } else {
+          messages.push('⚠️ ISP may be blocking YouTube. Try VPN or mobile hotspot.');
+          messages.push('📱 Alternative: Use YouTube mobile app');
+        }
         break;
       case 'open_subscriptions':
         messages.push('📺 Opening YouTube Subscriptions...');
+        const subsUrl = await this.findWorkingUrl(fallbackUrls.open_subscriptions);
+        if (subsUrl) {
+          messages.push(`🌐 Using: ${subsUrl}`);
+          messages.push('✅ Opening in browser...');
+        } else {
+          messages.push('⚠️ ISP may be blocking YouTube. Try VPN or mobile hotspot.');
+          messages.push('📱 Alternative: Use YouTube mobile app');
+        }
         break;
       case 'play_playlist':
         messages.push(`📺 Playing playlist: ${params.playlist}`);
+        messages.push('🔍 Checking ISP restrictions...');
+        const playlistWorking = await this.checkServiceAvailability('youtube');
+        if (!playlistWorking) {
+          messages.push('⚠️ YouTube may be restricted by ISP');
+          messages.push('💡 Suggestion: Use VPN, mobile hotspot, or YouTube Music app');
+        } else {
+          messages.push('✅ YouTube accessible, starting playlist...');
+        }
         break;
       default:
         messages.push(`❓ Unknown YouTube command: ${command}`);
@@ -328,14 +390,33 @@ class StepdaddyHub {
   async executeSpotifyCommand(command, params) {
     const messages = [];
     const service = this.services.spotify;
+    const fallbackUrls = {
+      'web': [
+        'https://open.spotify.com',
+        'https://spotify.com',
+        'https://play.spotify.com'
+      ]
+    };
     
     switch (command) {
       case 'play':
+        messages.push('🎵 Checking Spotify connectivity...');
+        const spotifyWorking = await this.checkServiceAvailability('spotify');
         if (service.currentTrack) {
-          messages.push(`▶️ Resuming: ${service.currentTrack}`);
+          if (spotifyWorking) {
+            messages.push(`▶️ Resuming: ${service.currentTrack}`);
+          } else {
+            messages.push(`⚠️ ISP blocking detected. Track queued: ${service.currentTrack}`);
+            messages.push('💡 Try: Spotify Desktop app, mobile hotspot, or VPN');
+          }
         } else {
-          service.currentTrack = 'Random Playlist';
-          messages.push(`▶️ Now playing: ${service.currentTrack}`);
+          if (spotifyWorking) {
+            service.currentTrack = 'Random Playlist';
+            messages.push(`▶️ Now playing: ${service.currentTrack}`);
+          } else {
+            messages.push('⚠️ Spotify access restricted by ISP');
+            messages.push('📱 Fallback: Use Spotify mobile app or try VPN');
+          }
         }
         break;
       case 'pause':
@@ -348,18 +429,34 @@ class StepdaddyHub {
       case 'next':
         service.currentTrack = 'Next Song - Artist';
         messages.push(`⏭️ Now playing: ${service.currentTrack}`);
+        const nextWorking = await this.checkServiceAvailability('spotify');
+        if (!nextWorking) {
+          messages.push('⚠️ Note: ISP may be blocking Spotify streaming');
+        }
         break;
       case 'previous':
         service.currentTrack = 'Previous Song - Artist';
         messages.push(`⏮️ Now playing: ${service.currentTrack}`);
         break;
       case 'play_liked':
-        service.currentTrack = 'Liked Songs Playlist';
-        messages.push(`🎵 Playing Liked Songs`);
+        messages.push('🎵 Checking access to Spotify...');
+        const likedWorking = await this.checkServiceAvailability('spotify');
+        if (likedWorking) {
+          service.currentTrack = 'Liked Songs Playlist';
+          messages.push(`🎵 Playing Liked Songs`);
+        } else {
+          messages.push('⚠️ Spotify blocked by ISP - using fallback');
+          messages.push('💡 Suggestion: Use Spotify app or enable VPN');
+          messages.push('🔄 Queued: Liked Songs (will play when connection available)');
+        }
         break;
       case 'play_discover':
         service.currentTrack = 'Discover Weekly';
         messages.push(`🎵 Playing Discover Weekly`);
+        const discoverWorking = await this.checkServiceAvailability('spotify');
+        if (!discoverWorking) {
+          messages.push('⚠️ ISP restriction detected - playlist queued for when accessible');
+        }
         break;
       default:
         messages.push(`❓ Unknown Spotify command: ${command}`);
@@ -424,6 +521,64 @@ class StepdaddyHub {
       connected: Object.values(this.services).filter(s => s.status === 'connected').length,
       total: Object.keys(this.services).length
     };
+  }
+
+  // ISP-aware helper methods
+  async checkServiceAvailability(serviceName) {
+    const serviceUrls = {
+      'youtube': ['https://www.youtube.com', 'https://youtube.com'],
+      'spotify': ['https://open.spotify.com', 'https://spotify.com'],
+      'plex': ['http://localhost:32400', 'https://app.plex.tv']
+    };
+
+    const urls = serviceUrls[serviceName] || [];
+    for (const url of urls) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+        
+        const response = await fetch(url, { 
+          method: 'HEAD',
+          signal: controller.signal,
+          headers: { 'User-Agent': 'MAZLABZ-Stepdaddy/1.0' }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.status < 400) {
+          return true; // Service is accessible
+        }
+      } catch (error) {
+        // ISP blocking or network error
+        continue;
+      }
+    }
+    return false; // Service appears to be blocked
+  }
+
+  async findWorkingUrl(urls) {
+    for (const url of urls) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
+        
+        const response = await fetch(url, { 
+          method: 'HEAD',
+          signal: controller.signal,
+          headers: { 'User-Agent': 'MAZLABZ-Stepdaddy/1.0' }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.status < 400) {
+          return url; // This URL works
+        }
+      } catch (error) {
+        // Try next URL
+        continue;
+      }
+    }
+    return null; // No working URLs found
   }
 }
 
