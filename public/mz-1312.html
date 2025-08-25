@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAZLABZ MZ-1312 Series</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:#00aaff;
+      --secondary:#a020f0;
+      --dark:#0a0a0a;
+      --light:#e0e0e0;
+      --card:#1a1a1a;
+      --border:#2a2a2a;
+    }
+    * {box-sizing:border-box;}
+    body {
+      margin:0;
+      font-family:'Roboto',sans-serif;
+      background:var(--dark);
+      color:var(--light);
+      line-height:1.6;
+    }
+    h1,h2,h3,h4 {margin:0 0 20px 0;}
+    .hero {
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      padding:0 1rem;
+      background:radial-gradient(circle at center,rgba(10,10,10,.6)0%,rgba(10,10,10,1)80%),linear-gradient(45deg,rgba(0,20,40,.3),rgba(40,0,40,.3));
+    }
+    .hero h1 {font-size:3rem;font-weight:900;letter-spacing:-1px;text-shadow:0 0 20px rgba(0,170,255,.3);}
+    .hero h3 {max-width:800px;font-weight:300;opacity:.8;}
+    .cta {
+      margin-top:40px;
+      padding:15px 40px;
+      background:linear-gradient(45deg,var(--primary),var(--secondary));
+      border:none;border-radius:50px;
+      color:#fff;font-size:1.2rem;font-weight:700;
+      text-decoration:none;display:inline-block;transition:.3s;
+    }
+    .cta:hover {transform:scale(1.05);box-shadow:0 0 30px rgba(160,32,240,.5);}
+    section {padding:80px 1rem;text-align:center;}
+    .dark{background:#000;}
+    .problem-list{list-style:none;padding:0;margin:0 auto;max-width:800px;}
+    .problem-list li{padding:15px 0;border-bottom:1px solid var(--border);}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:30px;margin-top:50px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:15px;overflow:hidden;display:flex;flex-direction:column;text-align:left;transition:.3s;}
+    .card:hover{transform:translateY(-10px);box-shadow:0 10px 40px rgba(0,0,0,.5);}
+    .card img{width:100%;height:250px;object-fit:cover;}
+    .card-content{padding:25px;display:flex;flex-direction:column;flex-grow:1;}
+    .card-content p{opacity:.7;flex-grow:1;}
+    .card-button{margin-top:20px;padding:10px 20px;border:2px solid var(--primary);color:var(--primary);text-decoration:none;border-radius:5px;font-weight:700;text-align:center;transition:.3s;}
+    .card-button:hover{background:var(--primary);color:#fff;}
+    .chassis img{height:150px;object-fit:contain;margin-bottom:20px;}
+    footer{background:#000;padding:40px 1rem;text-align:center;}
+    footer img{max-width:80px;margin-bottom:20px;opacity:.5;}
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <h1>Stop Renting Your Entertainment.</h1>
+    <h3>You pay for the subscription. You pay for the hardware. Then they sell your data, censor your content, and lock you into their ecosystem. There is a better way.</h3>
+    <a href="#solution" class="cta">RECLAIM YOUR LIVING ROOM</a>
+  </section>
+
+  <section class="dark">
+    <h2>The Game is Rigged.</h2>
+    <ul class="problem-list">
+      <li>You pay for sports you can't watch because of "regional blackouts."</li>
+      <li>The movies you "own" disappear from your library without warning.</li>
+      <li>Your kids see ads, but you can't see channels from your home country.</li>
+      <li>Your nostalgia is held hostage behind a monthly subscription fee.</li>
+    </ul>
+  </section>
+
+  <section id="solution">
+    <h2>Your Media. Your Rules. No Fine Print.</h2>
+    <p style="max-width:800px;margin:-30px auto 50px auto;opacity:.7;">We build the hardware. We provide the open-source freedom. You get total control. Choose your mission:</p>
+    <div class="grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1559703248-dcaaec9fab78?auto=format&fit=crop&w=800&q=60" alt="SportBox">
+        <div class="card-content">
+          <h4>THE MZ-1312 SPORTBOX</h4>
+          <p>For the dedicated fan who refuses to miss a game. Every league, every match, no blackouts.</p>
+          <a class="card-button" href="#">Learn More</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1527434000052-79c56d7dd7c1?auto=format&fit=crop&w=800&q=60" alt="RetroBox">
+        <div class="card-content">
+          <h4>THE MZ-1312 RETROBOX</h4>
+          <p>For the retro gamer who wants their childhood back. An entire arcade, offline and unlocked.</p>
+          <a class="card-button" href="#">Learn More</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1605902711622-cfb43c44367f?auto=format&fit=crop&w=800&q=60" alt="CineBox">
+        <div class="card-content">
+          <h4>THE MZ-1312 CINEBOX</h4>
+          <p>For the family that needs TV to be simple again. Your media, your rules, one easy-to-use interface.</p>
+          <a class="card-button" href="#">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark">
+    <h2>Purpose-Built Solutions.</h2>
+    <p style="max-width:800px;margin:-30px auto 50px auto;opacity:.7;">Need something more specific? We have a build for that.</p>
+    <div class="grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1586899028174-e7098604235f?auto=format&fit=crop&w=800&q=60" alt="International Edition">
+        <div class="card-content">
+          <h4>THE INTERNATIONAL EDITION</h4>
+          <p>Your favorite channels from home, one click away. Perfect for expats and families abroad.</p>
+          <a class="card-button" href="#">Explore</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=60" alt="Discreet Suite">
+        <div class="card-content">
+          <h4>THE DISCREET SUITE</h4>
+          <p>A PIN-protected, optional suite for the discerning adult. Unrestricted content with complete privacy.</p>
+          <a class="card-button" href="#">Learn More</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=800&q=60" alt="DIY Kit">
+        <div class="card-content">
+          <h4>THE DIY BUILD KIT</h4>
+          <p>The keys to the kingdom. Build your own unrestricted media hub with MAZ-OS and premium components.</p>
+          <a class="card-button" href="#">Order Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Choose Your Chassis.</h2>
+    <p style="max-width:800px;margin:-30px auto 50px auto;opacity:.7;">Every build is installed on battle-tested hardware. You choose the form factor.</p>
+    <div class="grid chassis">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&w=800&q=60" alt="Fire Stick">
+        <div class="card-content">
+          <h4>The Sleeper (Fire Stick)</h4>
+          <p>Low-profile, high-performance. Perfect for the CineBox.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=60" alt="Raspberry Pi">
+        <div class="card-content">
+          <h4>The Creator (Raspberry Pi)</h4>
+          <p>The heart of the RetroBox. Maximum power for flawless emulation.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1586448001630-9a3b774a0f4d?auto=format&fit=crop&w=800&q=60" alt="Android Box">
+        <div class="card-content">
+          <h4>The Workhorse (Android Box)</h4>
+          <p>The undisputed champion for the SportBox. Built for stable, buffer-free live streams.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <h2 style="font-size:2rem;margin-bottom:30px;">Ready to take back control?</h2>
+    <a href="#solution" class="cta" style="margin-bottom:50px;">BROWSE ALL PACKAGES</a>
+    <img src="https://avatars.githubusercontent.com/u/93985021?s=200&v=4" alt="MAZLABZ logo">
+    <p>&copy; 2025 MAZLABZ.AI. ABN 19018368113</p>
+    <p>Email: <a href="mailto:mazlabz.ai@gmail.com" style="color:var(--primary);text-decoration:none;">mazlabz.ai@gmail.com</a> | Phone: (+61) 493 719 523</p>
+  </footer>
+</body>
+</html>

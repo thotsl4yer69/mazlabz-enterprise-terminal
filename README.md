@@ -2,6 +2,10 @@
 
 Professional terminal interface with real Stripe payment processing for Fortune 500 AI solutions.
 
+## 🖥️ MZ-1312 Landing Page
+
+Static marketing page for the MZ-1312 hardware lineup lives at [`public/mz-1312.html`](public/mz-1312.html). This page showcases the SportBox, RetroBox and CineBox builds along with international, discreet and DIY options.
+
 ## 🚀 Live Demo
 - **Production URL**: https://mazlabz-terminal-894383524313.us-central1.run.app/
  - **Commands**: `help`, `pay`, `quote`, `roi`, `about`, `contact`, `upload`, `files`, `metadata`, `admin`, `pigeon`
