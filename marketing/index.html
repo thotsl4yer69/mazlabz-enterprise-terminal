@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAZLABZ MZ-1312 Series</title>
+  <style>
+    :root {
+      --primary:#00aaff;
+      --secondary:#a020f0;
+      --dark:#0a0a0a;
+      --light:#e0e0e0;
+      --card:#1a1a1a;
+      --border:#333;
+    }
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--dark);color:var(--light);line-height:1.6;scroll-behavior:smooth}
+    a{color:var(--primary);text-decoration:none}
+    .hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 20px;background:#000;position:relative;overflow:hidden}
+    .hero::before{content:"";position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center,rgba(10,10,10,.6)0%,rgba(10,10,10,1)80%),linear-gradient(45deg,rgba(0,20,40,.3),rgba(40,0,40,.3));z-index:1}
+    .hero *{z-index:2}
+    .hero h1{font-size:4rem;font-weight:900;margin:0;letter-spacing:-2px;text-shadow:0 0 20px rgba(0,170,255,.3)}
+    .hero h3{font-size:1.5rem;font-weight:300;max-width:800px;margin:20px 0 40px;opacity:.8}
+    .cta{background:linear-gradient(45deg,var(--primary),var(--secondary));color:#fff;padding:15px 40px;border-radius:40px;font-weight:700;transition:.3s;border:none}
+    .cta:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(160,32,240,.5)}
+    section{padding:80px 20px;max-width:1200px;margin:auto;text-align:center}
+    h2{font-size:2.5rem;font-weight:700;margin-bottom:50px}
+    .dark{background:#000}
+    .problem-list{list-style:none;padding:0;max-width:700px;margin:auto}
+    .problem-list li{padding:15px 0;border-bottom:1px solid var(--border)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;margin-top:40px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-align:left;transition:.3s}
+    .card:hover{transform:translateY(-10px);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+    .card img{width:100%;height:200px;object-fit:cover}
+    .card-content{padding:20px;flex-grow:1;display:flex;flex-direction:column}
+    .card-content h3{margin-top:0;font-size:1.4rem}
+    .card-content p{flex-grow:1;opacity:.8}
+    .card-content a{align-self:flex-start;margin-top:20px;padding:10px 20px;border:2px solid var(--primary);border-radius:4px;color:var(--primary);font-weight:bold}
+    .card-content a:hover{background:var(--primary);color:#000}
+    footer{background:#000;text-align:center;padding:40px 20px}
+    footer p{margin:5px 0;opacity:.6}
+    @media(max-width:600px){.hero h1{font-size:2.5rem}.hero h3{font-size:1.2rem}}
+  </style>
+</head>
+<body>
+  <section class="hero" id="home">
+    <h1>Stop Renting Your Entertainment.</h1>
+    <h3>You pay for the subscription. You pay for the hardware. Then they sell your data, censor your content, and lock you into their ecosystem. There is a better way.</h3>
+    <a class="cta" href="#mission">Reclaim Your Living Room</a>
+  </section>
+  <section class="dark" id="problem">
+    <h2>The Game is Rigged.</h2>
+    <ul class="problem-list">
+      <li>Sports you pay for are blocked in your region.</li>
+      <li>Movies you "own" vanish from streaming libraries.</li>
+      <li>Your family misses channels from home.</li>
+      <li>Nostalgia titles are trapped behind monthly fees.</li>
+    </ul>
+  </section>
+  <section id="mission">
+    <h2>Your Media. Your Rules. No Fine Print.</h2>
+    <p style="max-width:800px;margin:-30px auto 50px;opacity:.7">We build the hardware. We provide the open-source freedom. You get total control. Choose your mission:</p>
+    <div class="grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1600986603050-21d77e6b5486?auto=format&fit=crop&w=800&q=60" alt="sportbox">
+        <div class="card-content">
+          <h3>MZ-1312 SportBox</h3>
+          <p>Every match and fight, live. Powered by The Crew, Mad Titan Sports and DaddyLive for blackout-free coverage.</p>
+          <a href="#contact">Learn More</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1558944351-bcb727f06f94?auto=format&fit=crop&w=800&q=60" alt="retrobox">
+        <div class="card-content">
+          <h3>MZ-1312 RetroBox</h3>
+          <p>Raspberry Pi time machine with RetroArch, THX 1138 and Z3RO libraries for thousands of classics.</p>
+          <a href="#contact">Learn More</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=60" alt="cinebox">
+        <div class="card-content">
+          <h3>MZ-1312 CineBox</h3>
+          <p>Simple streaming for families and expats. FEN, Umbrella and Ezra deliver films and international channels.</p>
+          <a href="#contact">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="dark" id="specialized">
+    <h2>Purpose-Built Solutions.</h2>
+    <p style="max-width:800px;margin:-30px auto 50px;opacity:.7">Need something more specific? We have a build for that.</p>
+    <div class="grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1525182008055-f88b95ff7980?auto=format&fit=crop&w=800&q=60" alt="international">
+        <div class="card-content">
+          <h3>International Edition</h3>
+          <p>Greek, Italian and MENA channel packs preloaded for a single-click connection to home.</p>
+          <a href="#contact">Explore</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1553272724-40de1c9d4be1?auto=format&fit=crop&w=800&q=60" alt="discreet">
+        <div class="card-content">
+          <h3>Discreet Suite</h3>
+          <p>PIN-protected adult module powered by Cumination and FapZone. Installed only on request.</p>
+          <a href="#contact">Learn More</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=60" alt="diy kit">
+        <div class="card-content">
+          <h3>DIY Build Kit</h3>
+          <p>MAZ-OS image, Raspberry Pi, and chassis for creators who want full control.</p>
+          <a href="#contact">Order Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="hardware">
+    <h2>Choose Your Chassis.</h2>
+    <p style="max-width:800px;margin:-30px auto 50px;opacity:.7">Every build is installed on battle-tested hardware. You choose the form factor.</p>
+    <div class="grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60" alt="fire stick">
+        <div class="card-content">
+          <h3>The Sleeper (Fire Stick)</h3>
+          <p>Low-profile, high-performance. Perfect for the CineBox.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1580894894513-47e6b73d2e83?auto=format&fit=crop&w=800&q=60" alt="raspberry pi">
+        <div class="card-content">
+          <h3>The Creator (Raspberry Pi)</h3>
+          <p>The heart of the RetroBox. Maximum power for flawless emulation.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1587202372775-98927e43169b?auto=format&fit=crop&w=800&q=60" alt="android box">
+        <div class="card-content">
+          <h3>The Workhorse (Android Box)</h3>
+          <p>The undisputed champion for the SportBox. Built for stable, buffer-free live streams.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="contact" class="dark">
+    <h2>Ready to Take Back Control?</h2>
+    <p>Email <a href="mailto:mazlabz.ai@gmail.com">mazlabz.ai@gmail.com</a> or call (+61) 493 719 523 for custom builds and shipping.</p>
+  </section>
+  <footer>
+    <p>&copy; 2025 MAZLABZ.AI</p>
+    <p>Onore Alla Famiglia</p>
+  </footer>
+</body>
+</html>
